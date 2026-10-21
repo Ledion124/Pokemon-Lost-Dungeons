@@ -1,143 +1,78 @@
-# Plan: Pokémon Lost Dungeons – Spielidee & Arbeitsteilung
+# Plan – Arbeitsteilung Pokémon Lost Dungeons
+
+Spielidee und Regeln: siehe [Idee.md](Idee.md). Bewertung: `Bewertung.md`.
 
 ## Context
-Zork-2-Projekt (Modul 320), 3 Personen: **Engel, Sakaj, Castelberg**. Bewertet wird nach `Bewertung.md` (20 Punkte, 12 automatisch via `repo_check.py`, 8 an der Präsentation) und dem Auftrag `02_Zork2GameProjekt.pdf` (Aufgaben 2.1–3.4).
-Stand heute: Code kompiliert nicht (`cityOfTears` fehlt, `lab`-Rest), 13 Räume (bleiben alle), Hollow-Knight-Namen statt Pokémon, keine Tests, kaum JavaDoc, kein README, CR-Zeilenenden. Branch-Workflow: eigener Branch → PR nach `dev` → am Schluss 1× `dev` → `main`.
+Die Spielidee ist gewachsen (Relaxo/Flöte, Schlüssel → Abyss, Boss, Untersuchen, Pokémon-Kampfsystem). Der alte Stufen-Plan passt nicht mehr. Ziel: Jede Person arbeitet pro Stufe **unabhängig**, am Ende der Stufe wird nach `dev` gemergt, dann geht es mit der nächsten Stufe weiter.
 
----
-
-## 1. Spielidee (ausgearbeitet)
-
-**Story:** Du bist ein junger Pokémon-Trainer. Bei einer Expedition stürzt du durch einen Felsspalt in die *Lost Dungeons* – ein uraltes Höhlensystem. Dein Ziel: den **Kristallschlüssel** finden und durch das **Kristalltor** zurück ans Tageslicht.
-
-**Gewonnen (2.2):** Man gewinnt, sobald man den Raum **Tageslicht** betritt (`Room.isWinRoom() == true`). Das Kristalltor (Kristallhalle → Norden) ist verschlossen, solange der Spieler den **Kristallschlüssel** nicht im Inventar trägt → Gewicht/Inventar beeinflussen das Spiel (Raster 16/18 Stufe 3).
-
-### Räume (13) – alle bleiben, nur Pokémon-Namen; Ausgänge exakt wie in `docs/Idee.md`
-| # | Raum | bisher | Beschreibung |
-|---|---|---|---|
-| 1 | **Absturzstelle** (Start) | Ashfall Valley | Asche und Geröll, hier bist du gelandet. |
-| 2 | Regenruinen | City of Tears | Zerfallene Stadt, Wasser tropft von der Decke. |
-| 3 | Vergessene Kreuzung | Forgotten Crossroads | Alte Wegweiser; steiler Abhang nach Süden. |
-| 4 | Nebelschlucht | Fog Canyon | Dichter Nebel, wilde Zubat flattern. |
-| 5 | Kristallhalle | White Palace | Leuchtende Kristalle, im Norden das verschlossene Tor. |
-| 6 | Dunkler Abgrund | The Abyss | Still und kalt, Augen leuchten im Dunkeln. |
-| 7 | **Tageslicht** (Ziel) | Exit | Frische Luft – gewonnen! |
-| 8 | Schatzkammer | Ancient Treasures | Truhen voller alter Münzen. |
-| 9 | Felspass | King's Pass | Schmaler Pass, ein Felsabbruch nach Westen. |
-| 10 | Wilder Garten | Queen's Gardens | Dornen, Blumen und ein schlafendes Bisasam. |
-| 11 | Pokémon-Friedhof | Resting Grounds | Ruhige Grabsteine, Nebulak schweben umher. |
-| 12 | Moorpfad | Greenpath | Moos und Farn, der Boden schmatzt. |
-| 13 | Unterirdischer See | Royale Waterways | Trübes Wasser, Karpador planschen. |
-
-### Ausgänge (N / O / S / W), (E) = Einbahn – identisch zu Idee.md
-| Raum | N | O | S | W |
-|---|---|---|---|---|
-| Absturzstelle | Regenruinen | Schatzkammer | See | – |
-| Regenruinen | – | – | Absturzstelle | Kreuzung |
-| Kreuzung | – | Regenruinen | Nebelschlucht (E) | – |
-| Nebelschlucht | – | Absturzstelle (E) | – | Kristallhalle |
-| Kristallhalle | Tageslicht (E, braucht Schlüssel) | Nebelschlucht | Abgrund | – |
-| Abgrund | Kristallhalle | – | – | – |
-| Schatzkammer | – | – | – | Absturzstelle |
-| Felspass | Wilder Garten | – | Friedhof | Schatzkammer (E) |
-| Wilder Garten | – | – | Felspass | – |
-| Friedhof | Felspass | – | – | Moorpfad |
-| Moorpfad | – | Friedhof | – | See |
-| See | Absturzstelle | Moorpfad | – | – |
-| Tageslicht | – | – | – | – |
-
-Achtung: Der aktuelle Code in `Game.java` weicht davon ab (Fog Canyon N, Resting Grounds N/O) – im `WorldBuilder` gilt diese Tabelle.
-
-Lösungsweg: Absturzstelle → See → Moorpfad → Friedhof → Felspass → Wilder Garten (**Schlüssel**) → Felspass → Schatzkammer → Absturzstelle → Regenruinen → Kreuzung → Nebelschlucht → Kristallhalle → Tageslicht.
-
-### Items (Gewicht in kg, Maximalgewicht Spieler: **10 kg**)
-| Item | Raum | kg | Klasse |
-|---|---|---|---|
-| Pokéball | Absturzstelle | 0.5 | Item |
-| Trank | Regenruinen | 0.3 | Item |
-| Taschenlampe | Kreuzung | 1.0 | Item |
-| Seil | Moorpfad | 3.0 | Item |
-| Fahrrad | See | 12.0 | Item (zu schwer → Fehlermeldung, Demo fürs Maximalgewicht) |
-| Beere | Felspass | 0.2 | Item |
-| Goldnugget | Schatzkammer | 1.0 | `TreasureItem` (Wert in Pokédollar) |
-| Mondstein | Nebelschlucht | 2.0 | `TreasureItem` |
-| Schattenstein | Dunkler Abgrund | 4.0 | `TreasureItem` |
-| Altes Amulett | Pokémon-Friedhof | 0.5 | `TreasureItem` |
-| **Kristallschlüssel** | Wilder Garten | 0.5 | `KeyItem` (öffnet Kristalltor) |
-
-**Vererbung (3.4):** `Item` → `KeyItem`, `Item` → `TreasureItem`.
-
-### Befehle
-`go <richtung>`, `back`, `look`, `take <item>`, `drop <item>`, `inventory`, `map`, `help`, `quit`
-
----
-
-## 2. Architektur (Single Responsibility)
-| Klasse | Verantwortung |
+## Verantwortungsbereiche
+| Person | Bereich |
 |---|---|
-| `Zork2` | `main` – startet `Game` |
-| `Game` | Spielschleife + Befehle verteilen (bleibt < 150 Zeilen) |
-| `WorldBuilder` *(neu)* | Erstellt alle Räume, Ausgänge, Items; liefert `List<Room>` + Startraum |
-| `Room` | Beschreibung, Ausgänge, `ArrayList<Item>`, `isWinRoom` |
-| `Item` *(neu)* | Name, Beschreibung, Gewicht |
-| `KeyItem`, `TreasureItem` *(neu)* | Spezial-Items (Vererbung) |
-| `Player` *(neu)* | aktueller Raum, `Stack<Room>` für `back`, `Inventory` |
-| `Inventory` *(neu)* | Items tragen, Maximalgewicht prüfen, ablegen |
-| `Parser`, `Command`, `CommandWords` | bestehend, `CommandWords` um neue Befehle erweitern |
-| `TestStack` (`ch.bbw.diverses`) | löschen (gehört nicht zum Spiel) |
+| **Engel** | Welt & Navigation: Räume, Ausgänge, Sperren, Spieler-Bewegung, `back`, `map`, `use`, Gewonnen |
+| **Sakaj** | Gegenstände: Items, Inventar (Gewicht), Untersuchen, Flöte/Schlüssel platzieren, `take`/`drop`/`inventory`/`look`/`search` |
+| **Castelberg** | Pokémon & Kampf: Typen, Pokémon, Pokédex, Sammlung, Kampf, Boss, Spawnen, Starter, `fight`/`scare`/`team`, Neustart |
+
+## Ablauf pro Stufe
+1. `git pull origin dev`
+2. Nur in den eigenen Dateien der Stufe arbeiten. Was ein anderer in **derselben** Stufe baut, braucht man nicht.
+3. Fertig + eigene Tests grün → commit, push, PR **eigener Branch → `dev`**
+4. Wer als 2./3. mergt: vorher `git pull origin dev` + `mvn clean test`
+5. Nächste Stufe erst, wenn alle drei gemergt haben
+
+In `Game.java` ändert jeder **nur seine eigenen Methoden** (Stubs) → Git mergt ohne Konflikte.
 
 ---
 
-## 3. Arbeitsteilung
+## Stufe 0 – Fundament ✅
+Compile-Fehler, Zeilenenden, JUnit 5, erste Befehls-Stubs, leere `Item`/`Player`/`Inventory`.
 
-### Phase 0 – Fundament (Engel, **zuerst**, alle anderen warten auf diesen PR)
-- CR-Zeilenenden → normal, Compile-Fehler beheben, `TestStack` entfernen
-- `pom.xml`: Java 17, JUnit 5 (`junit-jupiter`), `maven-surefire-plugin`
-- `CommandWords` um alle Befehle oben erweitern; in `Game.processCommand` je Befehl einen **leeren Methoden-Stub** (`takeItem`, `dropItem`, `showInventory`, `look`, `goBack`, `showMap`) → jeder füllt danach nur seine eigenen Methoden, keine Merge-Konflikte
-- leere Klassen `Item`, `Player`, `Inventory` anlegen
-- PR → `dev`, danach `git pull origin dev` für alle
+## Stufe 1 – Grundklassen (je ~5 h)
+| Person | Aufgabe | Dateien |
+|---|---|---|
+| **Engel** | `Room`: `name`, `pokemonLevel`, `isWinRoom`, `exitString()` nur echte Ausgänge, **gesperrte Ausgänge** (`lockExit(richtung, meldung)`, `unlockExit(richtung)`, `isLocked(richtung)`). `WorldBuilder`: 13 Räume, Ausgänge, Level, Sperren (Relaxo, Abyss-Tür, Exit), `getRooms()`, `getRoom(name)`, `getStartRoom()`. `Game`-Konstruktor nutzt `WorldBuilder` | `Room`, `WorldBuilder` (neu), `Game` (Konstruktor), `RoomTest`, `WorldBuilderTest` |
+| **Sakaj** | `Item` (name, description, weight), `KeyItem extends Item`, `Inventory` (`ArrayList<Item>`, `add`, `remove(name)`, `contains(name)`, `getTotalWeight()`). Item-Gewichte festlegen. (Das Maximalgewicht prüft der `Player`, nicht das Inventory) | `Item`, `KeyItem` (neu), `Inventory`, `ItemTest`, `KeyItemTest`, `InventoryTest` |
+| **Castelberg** | `PokemonType` (enum, 5 Typen + `NORMAL` für Arceus, `getMultiplier(gegner)` → 2 / 1 / 0.5, Normal immer 1). `Pokemon` (name, type, baseHp, baseAttack, **weight**, `getCarryWeight()` = weight / 10 (Pokéball), level, currentHp, `getMaxHp()`, `getAttack()`, `takeDamage()`, `isFainted()`, `heal()`, `levelUp()` +2). `Pokedex`: Pokémon-Liste aus `Idee.md` übernehmen, `createRandom(level, Random)`. `PokemonCollection` (`add`, `remove(name)`, `get(name)`, `size()`, `healAll()`, `getTotalWeight()` mit Pokéball-Gewicht) | `PokemonType`, `Pokemon`, `Pokedex`, `PokemonCollection` (neu), `PokemonTypeTest`, `PokemonTest`, `PokedexTest`, `PokemonCollectionTest` |
 
-### Engel – Welt, Räume, Navigation
-- `WorldBuilder` mit den 13 Räumen + Ausgängen (Tabellen oben)
-- `Room`: `isWinRoom`, Gewonnen-Logik, verschlossenes Kristalltor
-- `back` (über `Stack<Room>` in `Player`), `map` (`ArrayList<Room>` in Game, aktueller Raum markiert)
-- Tests: `RoomTest`, `WorldBuilderTest` (je 5–8)
-- Doku: `docs/Idee.md` + Raumplan (`Map.png`) auf die Pokémon-Namen aktualisieren, **README.md** (≥ 150 Wörter: Story, Start mit `mvn`, Befehle, Lösungsweg-Hinweis)
+## Stufe 2 – Systeme (je ~6 h)
+| Person | Aufgabe | Dateien |
+|---|---|---|
+| **Engel** | `Player`: currentRoom, `Stack<Room>` history, `Inventory`, `PokemonCollection`, `moveTo(room)`, `goBack()` (nicht über Einbahnwege), `canGoBack()`, **Tragegewicht**: `MAX_WEIGHT` = 20 kg, `getTotalWeight()` (Items + Pokémon im Pokéball), `canCarry(weight)`. `Game`: `go` (beachtet Sperren) + `back` über Player, **Gewonnen** im Exit. `Game`-Init in `initGame()` auslagern (für Neustart). **Stubs v2**: neue Befehle `use`, `search`, `fight`, `scare`, `team`, `release` in `CommandWords` + leere Methoden, dazu leere Hooks `chooseStarter()` und `onEnterRoom(room)` | `Player`, `Game`, `CommandWords`, `PlayerTest` |
+| **Sakaj** | `Room`: `ArrayList<Item>` (`addItem`, `removeItem`, `getItem`, `hasItem`), Items in der Beschreibung. `HidingSpot` (Stein, Spalte …; kann ein Item verstecken, `search()` gibt es heraus). `Room`: Liste von HidingSpots | `Room` (Item-/HidingSpot-Teil), `HidingSpot` (neu), `RoomItemTest`, `HidingSpotTest` |
+| **Castelberg** | `BossPokemon extends Pokemon`. `Battle`: Team (bis 3, Reihenfolge) gegen Gegner, abwechselnd angreifen, nächstes Pokémon wenn eins fällt, Ergebnis gewonnen/verloren, Sieger +2 Level, danach alle heilen | `BossPokemon`, `Battle` (neu), `BossPokemonTest`, `BattleTest` |
 
-### Sakaj – Items
-- `Item` (name, description, weight, Getter, `toString`)
-- `KeyItem`, `TreasureItem` (Vererbung)
-- `Room`: `ArrayList<Item>`, `addItem`, `removeItem(name)`, `getItem(name)`, `hasItem`, Items in `longDescription()`
-- `look` Befehl
-- Items im `WorldBuilder` platzieren (nach Engels PR)
-- Tests: `ItemTest`, `KeyItemTest`, `TreasureItemTest`, Item-Tests in `RoomTest`
-- Doku: `docs/Items.md` (Aufgaben 2.4, 2.5, 2.6, 3.4)
+## Stufe 3 – Ins Spiel einbauen (je ~6 h)
+| Person | Aufgabe | Dateien |
+|---|---|---|
+| **Engel** | `use <item>`: Flöte im Greenpath → Relaxo weg, Schlüssel im White Palace → Abyss offen. `map`: alle Räume mit Items, aktueller Raum markiert, gesperrte Wege sichtbar. Welcome-/Help-Texte zur Story | `Game` (`useItem`, `showMap`, `printWelcome`, `printHelp`) |
+| **Sakaj** | `take` (prüft `player.canCarry`), `drop`, `inventory` (zeigt Items + Gesamtgewicht inkl. Pokémon; Fehlermeldungen: zu schwer / nicht da / nicht im Inventar), `look`, `search <ort>`. Im `WorldBuilder`: Schlüssel in Queen's Gardens, HidingSpots in jedem Raum, **Flöte zufällig** in einen der 7 erreichbaren Räume (`Random` als Parameter → testbar) | `Game` (`takeItem`, `dropItem`, `showInventory`, `look`, `search`), `WorldBuilder` (Items-Teil), `WorldBuilderTest` ergänzen |
+| **Castelberg** | `Room`: Feld für wildes Pokémon. `chooseStarter()` (Eis / Feuer / Pflanze). `onEnterRoom()`: spawnen, wenn Raum leer. `fight` (Team bis 3 wählen, `Battle` starten, Sieg → Sammlung, wenn `player.canCarry` – sonst flieht es), `scare`, `team` (mit Gewichten), `release <pokemon>`. Boss in The Abyss, Sieg → `unlockExit` am White Palace. Niederlage → `initGame()` (Neustart) | `Room` (Pokémon-Teil), `Game` (`chooseStarter`, `onEnterRoom`, `fight`, `scare`, `showTeam`, `release`), `RoomPokemonTest` |
 
-### Castelberg – Spieler & Inventar
-- `Inventory` (`ArrayList<Item>`, `maxWeight`, `add` mit Gewichtsprüfung, `remove`, `getTotalWeight`)
-- `Player` (currentRoom, history-Stack, Inventory)
-- Befehle `take`, `drop`, `inventory` mit Fehlermeldungen (zu schwer / nicht da / nicht im Inventar)
-- `Parser`-TODOs aufräumen (leere Eingabe, > 2 Wörter)
-- Tests: `InventoryTest`, `PlayerTest`, `CommandTest`, `CommandWordsTest`
-- Doku: `docs/Architektur.md`, **Klassendiagramm** (Mermaid in `Idee.md` + PNG) am Schluss mit allen Klassen, Attributen, Methoden, Vererbung
+## Stufe 4 – Doku & Abschluss (je ~4 h)
+| Person | Aufgabe | Dateien |
+|---|---|---|
+| **Engel** | **README.md** (≥ 150 Wörter: Story, Start mit `mvn`, alle Befehle, Gewonnen), `Map.png` mit Sperren, kompletter Testdurchlauf | `README.md`, `docs/Map.png` |
+| **Sakaj** | `docs/Items.md` (Aufgaben 2.4–2.6, 3.1–3.3), Item-Liste + Gewichte in `Idee.md`, `docs/Fragen.md` fertig, JavaDoc-Check aller Klassen | `docs/Items.md`, `docs/Idee.md` (Items), `docs/Fragen.md` |
+| **Castelberg** | **Klassendiagramm** (Mermaid + PNG, alle Klassen, Vererbung), `docs/Architektur.md` (Verantwortung je Klasse, `back`-Umsetzung), Pokémon-Liste in `Idee.md` | `docs/Idee.md` (Diagramm, Pokémon), `docs/Zork_diagramm.png`, `docs/Architektur.md` |
 
-### Für alle
+Danach gemeinsam: Checkliste `Bewertung.md` Punkt 1–20, **einmal PR `dev` → `main`**, Präsentation üben.
+
+---
+
+## Für alle, jede Stufe
 - **JavaDoc** auf jeder eigenen Klasse und Methode (Ziel > 90 %)
-- Klein und oft committen mit sinnvollen Nachrichten (Raster 1 bewertet gleichmässige Beteiligung)
-- Vor dem Arbeiten `git pull origin dev`, fertige Teile per PR → `dev`
-- `docs/Fragen.md` fertig machen (Code-Blöcke ohne `\` escapen)
+- **5–8 Tests** pro eigener Fachklasse, mit `assert`. Zufall immer über `Random`-Parameter → in Tests `new Random(42)`
+- Mehrere kleine Commits pro Stufe, sinnvolle Nachrichten (Raster 1)
 
-### Präsentation (10 Min.)
-1. Engel: Spielidee, Raumplan, Gewonnen, `back`, `map` (~3 Min.)
-2. Sakaj: Item, ArrayList im Raum, Gewicht, Vererbung (~3 Min.)
-3. Castelberg: Spieler/Inventar, Architektur, Klassendiagramm, Tests (~3 Min.)
-4. Live-Demo des Lösungswegs (~1 Min.)
+## Aufwand
+~21 h pro Person (Stufe 1–4), dazu Mergen/Bugfixing und Präsentation → **ca. 20–25 h pro Person**.
 
----
+## Präsentation (10 Min.)
+1. Engel: Story, Karte, Sperren, `back`, `map`, Gewonnen (~3 Min.)
+2. Sakaj: Items, Gewicht, Inventar, Untersuchen, Vererbung `KeyItem` (~3 Min.)
+3. Castelberg: Pokémon, Typen, Kampf, Vererbung `BossPokemon`, Klassendiagramm (~3 Min.)
+4. Live-Demo (~1 Min.)
 
-## 4. Verifikation
-- `mvn clean test` im Ordner `02_Zork-Start` → alles grün
-- Jede Fachklasse (Room, Item, KeyItem, TreasureItem, Player, Inventory, WorldBuilder, Command, CommandWords) hat ≥ 5 Tests mit `assert`
-- Manueller Durchlauf: Lösungsweg oben spielen, dazu: Tor ohne Schlüssel (verschlossen), Fahrrad nehmen (zu schwer), `back` nach Einbahnweg, `map`, `drop`
-- Checkliste gegen `Bewertung.md` Punkt 1–20 vor dem finalen PR `dev` → `main`
-- Repo: keine `target/`, `.idea/`, `.DS_Store` (`.gitignore` ist schon da)
+## Verifikation
+- Nach jedem Merge: `mvn clean test` im Ordner `02_Zork-Start` grün
+- Ende Stufe 3: Spiel einmal komplett durchspielen (Flöte suchen → Relaxo → Schlüssel → Boss → Exit), dazu: zu schweres Item, `back` nach Einbahnweg, Tod → Neustart
+- Vor `dev` → `main`: Checkliste `Bewertung.md`, keine `target/`/`.idea/` im Repo
