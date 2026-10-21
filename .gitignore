@@ -1,0 +1,31 @@
+# Maven / kompilierte Dateien
+target/
+*.class
+*.jar
+*.war
+*.log
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+__MACOSX/
+._*
+
+# Windows
+Thumbs.db
+desktop.ini
