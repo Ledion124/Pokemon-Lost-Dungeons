@@ -2,26 +2,6 @@
 
 Spielidee und Regeln: siehe [Idee.md](Idee.md). **Dieser Plan legt fest, wer was wann baut und wie die Klassen zusammenpassen.** Wo Plan und Idee sich widersprechen, gilt der Plan.
 
-## Einstieg für Claude (oder jeden anderen Helfer)
-
-Diesen Text am Anfang einer Session kopieren und `<NAME>` und `<N>` ersetzen:
-
-```
-Ich bin <NAME> (Engel / Sakaj / Castelberg) im Projekt Pokémon Lost Dungeons.
-Wir sind in Block <N>. Lies zuerst docs/Plan.md komplett und docs/Idee.md.
-Mach genau meine Aufgaben aus Block <N> in docs/Plan.md, nicht mehr und nicht weniger.
-Regeln:
-- Fass nur die Dateien an, die bei mir in Block <N> stehen.
-- Halte die Schnittstellen (Klassen, Methoden, Parameter, Rückgabewerte, Raumnamen) exakt so ein, wie sie im Plan stehen.
-- Erfinde keine zusätzlichen öffentlichen Methoden in fremden Klassen.
-- Schreib JavaDoc (Deutsch) und 5–8 JUnit-5-Tests pro eigener Fachklasse.
-- Am Ende muss `mvn clean test` im Ordner 02_Zork-Start grün sein.
-- Committe in kleinen Schritten auf meinen Branch dev-<name>, push nie direkt auf dev oder main.
-Wenn etwas im Plan unklar ist oder fehlt: frag mich, statt zu raten.
-```
-
----
-
 ## Grundidee: Arbeiten in Blöcken
 
 Wir arbeiten in **5 Blöcken** (0–4). In jedem Block arbeiten alle drei **gleichzeitig und unabhängig**, danach wird alles nach `dev` gemergt, und erst dann startet der nächste Block.
