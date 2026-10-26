@@ -8,8 +8,8 @@ Wir arbeiten in **5 Blöcken** (0–4). In jedem Block arbeiten alle drei **glei
 
 ```
 Block N:   Engel ──┐
-           Sakaj ──┼──► alle 3 PRs in dev gemergt ──► mvn clean test grün ──► Block N+1
-      Castelberg ──┘
+      Castelberg ──┼──► alle 3 PRs in dev gemergt ──► mvn clean test grün ──► Block N+1
+           Sakaj ──┘
 ```
 
 Damit das ohne Warten und ohne Merge-Konflikte klappt:
@@ -23,8 +23,8 @@ Damit das ohne Warten und ohne Merge-Konflikte klappt:
 | Person | Bereich | Branch |
 |---|---|---|
 | **Engel** | Welt & Navigation: Räume, Ausgänge, Sperren, Spieler, `back`, `map`, `use`, Starter, Gewonnen, Neustart | `dev-engel` |
-| **Sakaj** | Gegenstände: Items, Inventar, Verstecke, Flöte/Schlüssel platzieren, `take`/`drop`/`inventory`/`look`/`search` | `dev-sakaj` |
-| **Castelberg** | Pokémon & Kampf: Typen, Pokémon, Pokédex, Sammlung, Kampf, Boss, Spawnen, `fight`/`scare`/`team`/`release` | `dev-castelberg` |
+| **Castelberg** | Gegenstände: Items, Inventar, Verstecke, Flöte/Schlüssel platzieren, `take`/`drop`/`inventory`/`look`/`search` | `dev-castelberg` |
+| **Sakaj** | Pokémon & Kampf: Typen, Pokémon, Pokédex, Sammlung, Kampf, Boss, Spawnen, `fight`/`scare`/`team`/`release` | `dev-sakaj` |
 
 ---
 
@@ -45,7 +45,7 @@ Damit das ohne Warten und ohne Merge-Konflikte klappt:
 
 ### Raumnamen
 
-Diese Strings werden von allen drei verwendet (`getRoom(name)`, `KeyItem`, Boss-Logik). Engel legt sie in Block 1 zusätzlich als Konstanten in `WorldBuilder` an (`WorldBuilder.WHITE_PALACE` usw.). In Block 1 benutzen Sakaj und Castelberg die String-Werte, ab Block 2 dürfen alle die Konstanten nehmen.
+Diese Strings werden von allen drei verwendet (`getRoom(name)`, `KeyItem`, Boss-Logik). Engel legt sie in Block 1 zusätzlich als Konstanten in `WorldBuilder` an (`WorldBuilder.WHITE_PALACE` usw.). In Block 1 benutzen Castelberg und Sakaj die String-Werte, ab Block 2 dürfen alle die Konstanten nehmen.
 
 | Konstante | Name | `pokemonLevel` |
 |---|---|---|
@@ -147,7 +147,7 @@ Alle Klassen sind reine Fachklassen ohne Abhängigkeit zu den anderen. `Game.jav
 - Sperren: `lockExit(String direction, String message)`, `unlockExit(String direction)`, `isLocked(String direction)`, `getLockMessage(String direction)` (`null` wenn offen)
 - `hasExitTo(Room room)` → `true`, wenn ein **offener** Ausgang in diesen Raum führt
 - `shortDescription()` → Name
-- `longDescription()` → so aufgebaut (Sakaj und Castelberg hängen später Zeilen **hinten** an):
+- `longDescription()` → so aufgebaut (Castelberg und Sakaj hängen später Zeilen **hinten** an):
   ```
   You are in <name>. <description>
   Exits: north east south(blocked)
@@ -156,7 +156,7 @@ Alle Klassen sind reine Fachklassen ohne Abhängigkeit zu den anderen. `Game.jav
 
 **`WorldBuilder`**
 - Konstanten mit allen 13 Raumnamen (siehe [Raumnamen](#raumnamen))
-- `WorldBuilder(Random random)` – speichert `random` in einem Feld `private final Random random` (braucht Sakaj in Block 3) und baut die Welt
+- `WorldBuilder(Random random)` – speichert `random` in einem Feld `private final Random random` (braucht Castelberg in Block 3) und baut die Welt
 - alle 13 Räume mit Name, **englischer** Beschreibung (aus der Tabelle in `Idee.md` übersetzt) und Level
 - Ausgänge exakt wie Tabelle „Ausgänge“ in `Idee.md`; Einbahnwege = nur in eine Richtung eintragen
 - Sperren mit den Texten aus [Spieltexte](#spieltexte): Greenpath `east`, White Palace `south`, White Palace `north`
@@ -170,7 +170,7 @@ Alle Klassen sind reine Fachklassen ohne Abhängigkeit zu den anderen. `Game.jav
 
 **Tests u. a.:** Sperre blockiert `hasExitTo`, `unlockExit` öffnet, Einbahn (Forgotten Crossroads → Fog Canyon, kein Weg zurück), 13 Räume, `getRoom("King's Pass")` nicht `null`, Exit ist `winRoom`.
 
-### Sakaj – Gegenstände
+### Castelberg – Gegenstände
 **Dateien:** `Item.java`, `KeyItem.java` (neu), `Inventory.java`, `ItemTest`, `KeyItemTest`, `InventoryTest`
 
 **`Item`**
@@ -190,7 +190,7 @@ Alle Klassen sind reine Fachklassen ohne Abhängigkeit zu den anderen. `Game.jav
 - `getItems()` → `List<Item>` (Kopie), `getTotalWeight()`, `isEmpty()`, `size()`
 - **Kein** Maximalgewicht (prüft der `Player`)
 
-### Castelberg – Pokémon
+### Sakaj – Pokémon
 **Dateien:** `PokemonType.java`, `Pokemon.java`, `Pokedex.java`, `PokemonCollection.java` (alle neu) + je ein Test
 
 **`PokemonType`** (enum)
@@ -258,14 +258,14 @@ private void useItem(Command command) { }
 private void showMap() { }
 private void chooseStarter() { }
 
-// ===================== Sakaj (Block 3) =====================
+// ===================== Castelberg (Block 3) =====================
 private void look() { }
 private void search(Command command) { }
 private void takeItem(Command command) { }
 private void dropItem(Command command) { }
 private void showInventory() { }
 
-// ================== Castelberg (Block 3) ===================
+// ================== Sakaj (Block 3) ===================
 private void spawnAll() { }
 private void onEnterRoom(Room room) { }
 private void fight() { }
@@ -276,7 +276,7 @@ private void release(Command command) { }
 
 **Tests u. a.:** `back` nach normalem Weg geht, `back` nach Einbahn geht nicht, `back` bei leerem Stack geht nicht, `canCarry` an der 20-kg-Grenze, Gewicht zählt Items + Pokémon im Pokéball.
 
-### Sakaj – Items in Räumen, Verstecke
+### Castelberg – Items in Räumen, Verstecke
 **Dateien:** `Room.java` (nur Item-/Versteck-Teil, Engel fasst `Room` in Block 2 nicht an), `HidingSpot.java` (neu), `RoomItemTest`, `HidingSpotTest`
 
 **`Room`** (neu dazu)
@@ -294,7 +294,7 @@ private void release(Command command) { }
 - `hideItem(Item)`, `search()` → verstecktes `Item` oder `null`; danach ist es leer und `isSearched()` → `true`
 - `hasHiddenItem()`
 
-### Castelberg – Boss & Kampf
+### Sakaj – Boss & Kampf
 **Dateien:** `BossPokemon.java`, `Battle.java` (neu), `Pokedex.java` (nur `createBoss()`), `BossPokemonTest`, `BattleTest`
 
 **`BossPokemon extends Pokemon`**
@@ -333,10 +333,10 @@ Jeder füllt **nur die Methoden in seinem Abschnitt** von `Game.java`. Keine neu
 - `showMap()`: für jeden Raum aus `world.getRooms()` eine Zeile: Name, Items im Raum, gesperrte Ausgänge; aktueller Raum mit `>` am Anfang markiert
 - `chooseStarter()`: zeigt `1) Cubchoo (Ice)  2) Charmander (Fire)  3) Bulbasaur (Grass)`, liest mit `parser.readLine()`, bei ungültiger Eingabe nochmals fragen, bei leerer Eingabe (Ende) Nummer 1. Pokémon über `Pokedex.create(name, 5)` in `player.getPokemons()`
 - `printWelcome()` und `printHelp()`: Story und Ziel **auf Englisch**, `printHelp` listet alle Befehle mit kurzer Erklärung
-- alle übrigen deutschen Texte in `Game` ausserhalb der Abschnitte von Sakaj und Castelberg übersetzen
+- alle übrigen deutschen Texte in `Game` ausserhalb der Abschnitte von Castelberg und Sakaj übersetzen
 
-### Sakaj – Item-Befehle, Items in der Welt
-**Dateien:** `Game.java` (Abschnitt Sakaj), `WorldBuilder.java` (nur neue Methode `placeItems()` + ihr Aufruf als **letzte Zeile** im Konstruktor), `WorldBuilderItemsTest` (neu, nicht `WorldBuilderTest` ändern)
+### Castelberg – Item-Befehle, Items in der Welt
+**Dateien:** `Game.java` (Abschnitt Castelberg), `WorldBuilder.java` (nur neue Methode `placeItems()` + ihr Aufruf als **letzte Zeile** im Konstruktor), `WorldBuilderItemsTest` (neu, nicht `WorldBuilderTest` ändern)
 
 - `takeItem(command)`: ohne zweites Wort → `Take what?`; nicht im Raum → `There is no <name> here.`; `!player.canCarry(weight)` → `That is too heavy. Drop something or release a Pokémon first.`; sonst aus dem Raum ins Inventar
 - `dropItem(command)`: ohne zweites Wort → `Drop what?`; nicht im Inventar → `You don't have that.`; sonst in den Raum
@@ -349,15 +349,15 @@ Jeder füllt **nur die Methoden in seinem Abschnitt** von `Game.java`. Keine neu
   - `KeyItem.createFlute()` in **ein zufälliges Versteck** aus allen Verstecken der 7 erreichbaren Räume (Ashfall Valley, City of Tears, Forgotten Crossroads, Fog Canyon, White Palace, Ancient Treasures, Royale Waterways), mit `random`
 - **Tests:** Schlüssel liegt in Queen's Gardens, jeder Raum ausser Exit hat Verstecke, Flöte liegt genau einmal in einem der 7 Räume, mit `new Random(42)` immer am selben Ort
 
-### Castelberg – Pokémon im Spiel
-**Dateien:** `Room.java` (nur Pokémon-Teil, Sakaj fasst `Room` in Block 3 nicht an), `Game.java` (Abschnitt Castelberg), `RoomPokemonTest`
+### Sakaj – Pokémon im Spiel
+**Dateien:** `Room.java` (nur Pokémon-Teil, Castelberg fasst `Room` in Block 3 nicht an), `Game.java` (Abschnitt Sakaj), `RoomPokemonTest`
 
 **`Room`** (neu dazu)
 - `getWildPokemon()` → `Pokemon` oder `null`, `setWildPokemon(Pokemon)`, `removeWildPokemon()`, `hasWildPokemon()`
 - `isSpawnRoom()` → `pokemonLevel > 0 && !name.equals("The Abyss")`
 - `longDescription()` hängt **hinten** an (nur wenn vorhanden): `A wild <toString des Pokémon> appears!`
 
-**`Game`** (Abschnitt Castelberg)
+**`Game`** (Abschnitt Sakaj)
 - `spawnAll()`: in jeden Raum mit `isSpawnRoom()` ein `Pokedex.createRandom(room.getPokemonLevel(), random)`
 - `onEnterRoom(room)`:
   - The Abyss: Boss setzen, wenn kein Pokémon im Raum **und** der Boss noch nicht besiegt ist. „Boss besiegt“ heisst: `world.getRoom("White Palace").isLocked("north") == false` (kein neues Feld nötig)
@@ -380,13 +380,13 @@ Jeder füllt **nur die Methoden in seinem Abschnitt** von `Game.java`. Keine neu
 
 ## Block 4 – Testen, Doku & Abschluss (je ~4 h)
 
-**Erste Stunde gemeinsam:** Jeder spielt das Spiel einmal ganz durch (siehe [Verifikation](#verifikation)) und notiert Bugs als GitHub-Issue mit Label `engel` / `sakaj` / `castelberg`. Jeder fixt die Bugs **in seinem Bereich** (Datei-Besitz wie in Block 1–3).
+**Erste Stunde gemeinsam:** Jeder spielt das Spiel einmal ganz durch (siehe [Verifikation](#verifikation)) und notiert Bugs als GitHub-Issue mit Label `engel` / `castelberg` / `sakaj`. Jeder fixt die Bugs **in seinem Bereich** (Datei-Besitz wie in Block 1–3).
 
 | Person | Aufgabe | Dateien |
 |---|---|---|
 | **Engel** | **README.md** (≥ 150 Wörter: Story, Start mit `mvn`, alle Befehle, Gewonnen), `Map.png` mit den Sperren, Bugs Welt/Navigation | `README.md`, `docs/Map.png` |
-| **Sakaj** | `docs/Items.md` (Aufgaben 2.4–2.6, 3.1–3.3), Item-Liste + Gewichte in `Idee.md`, `docs/Fragen.md` fertig, JavaDoc-Check **aller** Klassen (nur JavaDoc ergänzen, keinen Code ändern), Bugs Items | `docs/Items.md`, `docs/Idee.md` (Abschnitt Items), `docs/Fragen.md` |
-| **Castelberg** | **Klassendiagramm** (Mermaid + PNG, alle Klassen, Vererbung `KeyItem`/`BossPokemon`), `docs/Architektur.md` (Verantwortung je Klasse, `back`-Umsetzung), Bugs Pokémon/Kampf | `docs/Idee.md` (Abschnitt Klassendiagramm), `docs/Zork_diagramm.png`, `docs/Architektur.md` |
+| **Castelberg** | `docs/Items.md` (Aufgaben 2.4–2.6, 3.1–3.3), Item-Liste + Gewichte in `Idee.md`, `docs/Fragen.md` fertig, JavaDoc-Check **aller** Klassen (nur JavaDoc ergänzen, keinen Code ändern), Bugs Items | `docs/Items.md`, `docs/Idee.md` (Abschnitt Items), `docs/Fragen.md` |
+| **Sakaj** | **Klassendiagramm** (Mermaid + PNG, alle Klassen, Vererbung `KeyItem`/`BossPokemon`), `docs/Architektur.md` (Verantwortung je Klasse, `back`-Umsetzung), Bugs Pokémon/Kampf | `docs/Idee.md` (Abschnitt Klassendiagramm), `docs/Zork_diagramm.png`, `docs/Architektur.md` |
 
 `Idee.md` wird hier von zwei Personen geändert – aber in **verschiedenen Abschnitten**, das mergt Git ohne Probleme.
 
@@ -398,12 +398,12 @@ Danach gemeinsam: Bewertungsraster (`docs/Bewertung.md`) Punkt für Punkt prüfe
 
 | Datei | Block 1 | Block 2 | Block 3 | Block 4 |
 |---|---|---|---|---|
-| `Room` | Engel | Sakaj (Items, Verstecke) | Castelberg (Pokémon) | Bugfix im eigenen Teil |
-| `WorldBuilder` | Engel | – | Sakaj (`placeItems`) | Bugfix im eigenen Teil |
+| `Room` | Engel | Castelberg (Items, Verstecke) | Sakaj (Pokémon) | Bugfix im eigenen Teil |
+| `WorldBuilder` | Engel | – | Castelberg (`placeItems`) | Bugfix im eigenen Teil |
 | `Game` | Engel (Konstruktor) | Engel | **alle**, je eigener Abschnitt | Bugfix im eigenen Abschnitt |
 | `Player`, `Parser`, `CommandWords` | – | Engel | – | Engel |
-| `Item`, `KeyItem`, `Inventory`, `HidingSpot` | Sakaj | Sakaj | – | Sakaj |
-| `PokemonType`, `Pokemon`, `Pokedex`, `PokemonCollection`, `Battle`, `BossPokemon` | Castelberg | Castelberg | – | Castelberg |
+| `Item`, `KeyItem`, `Inventory`, `HidingSpot` | Castelberg | Castelberg | – | Castelberg |
+| `PokemonType`, `Pokemon`, `Pokedex`, `PokemonCollection`, `Battle`, `BossPokemon` | Sakaj | Sakaj | – | Sakaj |
 | `Command`, `Zork2` | – | – | – | – (nicht ändern) |
 
 ---
@@ -428,8 +428,8 @@ Dazu Mergen/Bugfixing und Präsentation → **ca. 22–25 h pro Person**.
 
 ## Präsentation (10 Min.)
 1. Engel: Story, Karte, Sperren, `back`, `map`, Gewonnen (~3 Min.)
-2. Sakaj: Items, Gewicht, Inventar, Untersuchen, Vererbung `KeyItem` (~3 Min.)
-3. Castelberg: Pokémon, Typen, Kampf, Vererbung `BossPokemon`, Klassendiagramm (~3 Min.)
+2. Castelberg: Items, Gewicht, Inventar, Untersuchen, Vererbung `KeyItem` (~3 Min.)
+3. Sakaj: Pokémon, Typen, Kampf, Vererbung `BossPokemon`, Klassendiagramm (~3 Min.)
 4. Live-Demo (~1 Min.)
 
 ## Verifikation
