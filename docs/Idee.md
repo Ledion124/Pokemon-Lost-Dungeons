@@ -14,6 +14,14 @@ Doppelpfeile sind Wege in beide Richtungen, einfache Pfeile sind Einbahnwege (ma
 
 ---
 
+## Sprache
+
+- **Im Spiel (Terminal) ist alles Englisch:** Befehle, Ausgaben, Raumbeschreibungen, Gegenstände (`flute`, `key`), Stellen zum Untersuchen, Pokémon-Namen und Typen.
+- **Die Dokumentation** (diese Datei, README usw.) ist Deutsch. In den Tabellen steht jeweils der englische Name, der im Spiel verwendet wird.
+- Befehlswörter ohne Umlaute und Sonderzeichen, damit die Windows-Konsole sie sicher einliest.
+
+---
+
 ## Hauptstory
 
 Du bist in einem unterirdischen Höhlensystem gefangen. Der einzige Ausgang (**Exit**, nördlich vom White Palace) ist verschüttet.
@@ -42,7 +50,7 @@ Ashfall Valley → (Flöte suchen in den erreichbaren Räumen) → Royale Waterw
 
 | Raum | Beschreibung | Pokémon-Level |
 |---|---|---|
-| Ashfall Valley (Start) | Ein Tal voller grauer Asche. Von hier führen Wege in alle Teile der Welt. | 5 (hier gibt es das Starter-Pokémon) |
+| Ashfall Valley (Start) | Ein Tal voller grauer Asche. Von hier führen Wege in alle Teile der Welt. | kein Spawn (hier wählt man das Starter-Pokémon) |
 | City of Tears | Eine verlassene Stadt, in der es ohne Pause regnet. | 5 |
 | Forgotten Crossroads | Alte, vergessene Wegkreuzungen. Ein steiler Abhang führt nach Süden in den Nebel. | 10 |
 | Fog Canyon | Eine Schlucht voller dichtem Nebel. Man sieht kaum die eigene Hand. | 20 |
@@ -94,12 +102,12 @@ Kam man über einen **Einbahnweg**, ist `back` nicht möglich → Meldung „Der
 | `take <item>` | Gegenstand aufnehmen (wenn das Tragegewicht reicht) |
 | `drop <item>` | Gegenstand im Raum ablegen |
 | `inventory` | getragene Gegenstände und Gesamtgewicht anzeigen |
-| `use <item>` | Gegenstand benutzen, z. B. `use flöte` im Greenpath, `use schlüssel` im White Palace |
+| `use <item>` | Gegenstand benutzen, z. B. `use flute` im Greenpath, `use key` im White Palace |
 | `map` | alle Räume mit ihren Gegenständen, der aktuelle Raum ist markiert |
-| `fight` | gegen das wilde Pokémon im Raum kämpfen (danach Team aus bis zu 3 Pokémon wählen) |
-| `scare` | das wilde Pokémon wegscheuchen |
-| `team` | eigene Pokémon-Sammlung mit Level, HP, Schaden und Gewicht anzeigen |
-| `release <pokemon>` | ein Pokémon freilassen |
+| `fight` | gegen das wilde Pokémon im Raum kämpfen (danach Team aus bis zu 3 Pokémon per Nummer wählen, z. B. `1 3 2`) |
+| `scare` | das wilde Pokémon wegscheuchen (nicht beim Boss) |
+| `team` | eigene Pokémon-Sammlung als **nummerierte** Liste mit Level, HP, Schaden und Gewicht |
+| `release <nummer>` | ein Pokémon freilassen, z. B. `release 2` (Nummer aus `team`) |
 | `help` | Hilfe und alle Befehle anzeigen |
 | `quit` | Spiel beenden |
 
@@ -118,22 +126,22 @@ In jedem Raum gibt es ein paar Stellen zum Untersuchen, z. B. **Steine** oder **
 
 ### Stellen pro Raum
 
-Name in Klammern = Wort für den Befehl, z. B. `search asche`. Mit * markierte Räume können die Zauberflöte enthalten.
+Englisches Wort in Klammern = Wort für den Befehl, z. B. `search ash`. Mit * markierte Räume können die Zauberflöte enthalten.
 
 | Raum | Stellen zum Untersuchen |
 |---|---|
-| Ashfall Valley * | Aschehaufen (`asche`), verkohlter Baumstumpf (`stumpf`), Felsspalte (`spalte`) |
-| City of Tears * | Regenrinne (`rinne`), eingestürztes Haus (`haus`), Brunnen (`brunnen`), Pfütze (`pfuetze`) |
-| Forgotten Crossroads * | alter Wegweiser (`wegweiser`), Geröllhaufen (`geroell`) |
-| Fog Canyon * | Felsvorsprung (`vorsprung`), Nebelloch (`loch`), umgestürzter Stein (`stein`) |
-| White Palace * | Thron (`thron`), Marmorsäule (`saeule`), zerbrochene Statue (`statue`), Wandnische (`nische`), Kronleuchter (`leuchter`) |
-| The Abyss | dunkle Spalte (`spalte`), Knochenhaufen (`knochen`) |
-| Ancient Treasures * | Truhe (`truhe`), Münzhaufen (`muenzen`), Wandregal (`regal`), Urne (`urne`), Sarkophag (`sarkophag`) |
-| King's Pass | Felsspalte (`spalte`), Steinhaufen (`steine`), Höhleneingang (`hoehle`) |
-| Queen's Gardens | Rosenbusch (`busch`), Springbrunnen (`brunnen`), Gartenbank (`bank`), Blumenbeet (`beet`) |
-| Resting Grounds | Grabstein (`grabstein`), Gruft (`gruft`), verwelkter Kranz (`kranz`) |
-| Greenpath | Moospolster (`moos`), hohler Baum (`baum`) |
-| Royale Waterways * | Abflussgitter (`gitter`), Wasserbecken (`becken`), rostiges Rohr (`rohr`), Treibgut (`treibgut`) |
+| Ashfall Valley * | Aschehaufen (`ash`), verkohlter Baumstumpf (`stump`), Felsspalte (`crack`) |
+| City of Tears * | Regenrinne (`gutter`), eingestürztes Haus (`house`), Brunnen (`well`), Pfütze (`puddle`) |
+| Forgotten Crossroads * | alter Wegweiser (`signpost`), Geröllhaufen (`rubble`) |
+| Fog Canyon * | Felsvorsprung (`ledge`), Nebelloch (`hole`), umgestürzter Stein (`rock`) |
+| White Palace * | Thron (`throne`), Marmorsäule (`pillar`), zerbrochene Statue (`statue`), Wandnische (`niche`), Kronleuchter (`chandelier`) |
+| The Abyss | dunkle Spalte (`crack`), Knochenhaufen (`bones`) |
+| Ancient Treasures * | Truhe (`chest`), Münzhaufen (`coins`), Wandregal (`shelf`), Urne (`urn`), Sarkophag (`sarcophagus`) |
+| King's Pass | Felsspalte (`crack`), Steinhaufen (`stones`), Höhleneingang (`cave`) |
+| Queen's Gardens | Rosenbusch (`bush`), Springbrunnen (`fountain`), Gartenbank (`bench`), Blumenbeet (`flowerbed`) |
+| Resting Grounds | Grabstein (`gravestone`), Gruft (`crypt`), verwelkter Kranz (`wreath`) |
+| Greenpath | Moospolster (`moss`), hohler Baum (`tree`) |
+| Royale Waterways * | Abflussgitter (`grate`), Wasserbecken (`basin`), rostiges Rohr (`pipe`), Treibgut (`driftwood`) |
 | Exit | – (Spiel ist gewonnen) |
 
 ---
@@ -150,12 +158,12 @@ Es gibt 5 Typen. Ist der Angreifer stark gegen den Gegner, macht er **doppelten 
 
 | Typ | schlägt | verliert gegen |
 |---|---|---|
-| Feuer | Pflanze, Eis | Boden, Gestein |
-| Pflanze | Boden, Gestein | Feuer, Eis |
-| Eis | Pflanze, Boden | Feuer, Gestein |
-| Boden | Feuer, Gestein | Pflanze, Eis |
-| Gestein | Feuer, Eis | Pflanze, Boden |
-| Normal (nur Arceus) | – | – |
+| Feuer (`Fire`) | Pflanze, Eis | Boden, Gestein |
+| Pflanze (`Grass`) | Boden, Gestein | Feuer, Eis |
+| Eis (`Ice`) | Pflanze, Boden | Feuer, Gestein |
+| Boden (`Ground`) | Feuer, Gestein | Pflanze, Eis |
+| Gestein (`Rock`) | Feuer, Eis | Pflanze, Boden |
+| Normal (`Normal`, nur Arceus) | – | – |
 
 ### Pokémon-Liste
 
@@ -163,8 +171,8 @@ Alle Pokémon, die spawnen können, stehen in einer Liste mit ihren Grundwerten:
 
 | Attribut | Bedeutung |
 |---|---|
-| Name | z. B. Glumanda |
-| Typ | einer der 5 Typen |
+| Name | englischer Name im Spiel, z. B. Charmander |
+| Typ | einer der 5 Typen (Normal nur für Arceus) |
 | Basis-HP | Lebenspunkte bei Level 0 |
 | Basis-Angriff | Schaden pro Angriff bei Level 0 |
 | Gewicht | in kg, zählt zum Tragegewicht des Spielers (siehe [Tragegewicht](#tragegewicht)) |
@@ -172,51 +180,51 @@ Alle Pokémon, die spawnen können, stehen in einer Liste mit ihren Grundwerten:
 Schwere Pokémon sind stärker, belasten aber das [Tragegewicht](#tragegewicht) mehr. Die Gewichte sind die echten Pokédex-Werte.
 Im Pokéball wiegt ein Pokémon nur **ein Zehntel** (Spalte „im Pokéball“).
 
-#### Feuer
-| Name | Basis-HP | Basis-Angriff | Gewicht | im Pokéball |
+#### Feuer (`Fire`)
+| Name im Spiel (Deutsch) | Basis-HP | Basis-Angriff | Gewicht | im Pokéball |
 |---|---|---|---|---|
-| Glumanda (Starter) | 20 | 6 | 8.5 kg | 0.85 kg |
-| Fukano | 26 | 7 | 19.0 kg | 1.9 kg |
-| Ponita | 30 | 8 | 30.0 kg | 3.0 kg |
+| Charmander (Glumanda, Starter) | 20 | 6 | 8.5 kg | 0.85 kg |
+| Growlithe (Fukano) | 26 | 7 | 19.0 kg | 1.9 kg |
+| Ponyta (Ponita) | 30 | 8 | 30.0 kg | 3.0 kg |
 | Magmar | 36 | 9 | 44.5 kg | 4.45 kg |
 
-#### Pflanze
-| Name | Basis-HP | Basis-Angriff | Gewicht | im Pokéball |
+#### Pflanze (`Grass`)
+| Name im Spiel (Deutsch) | Basis-HP | Basis-Angriff | Gewicht | im Pokéball |
 |---|---|---|---|---|
-| Bisasam (Starter) | 22 | 5 | 6.9 kg | 0.69 kg |
-| Knofensa | 16 | 7 | 4.0 kg | 0.4 kg |
-| Endivie | 20 | 5 | 6.4 kg | 0.64 kg |
+| Bulbasaur (Bisasam, Starter) | 22 | 5 | 6.9 kg | 0.69 kg |
+| Bellsprout (Knofensa) | 16 | 7 | 4.0 kg | 0.4 kg |
+| Chikorita (Endivie) | 20 | 5 | 6.4 kg | 0.64 kg |
 | Tangela | 34 | 7 | 35.0 kg | 3.5 kg |
 
-#### Eis
-| Name | Basis-HP | Basis-Angriff | Gewicht | im Pokéball |
+#### Eis (`Ice`)
+| Name im Spiel (Deutsch) | Basis-HP | Basis-Angriff | Gewicht | im Pokéball |
 |---|---|---|---|---|
-| Petznief (Starter) | 21 | 6 | 8.5 kg | 0.85 kg |
-| Gelatini | 16 | 6 | 5.7 kg | 0.57 kg |
-| Schneppke | 24 | 6 | 16.8 kg | 1.68 kg |
-| Sniebel | 26 | 9 | 28.0 kg | 2.8 kg |
+| Cubchoo (Petznief, Starter) | 21 | 6 | 8.5 kg | 0.85 kg |
+| Vanillite (Gelatini) | 16 | 6 | 5.7 kg | 0.57 kg |
+| Snorunt (Schneppke) | 24 | 6 | 16.8 kg | 1.68 kg |
+| Sneasel (Sniebel) | 26 | 9 | 28.0 kg | 2.8 kg |
 
-#### Boden
-| Name | Basis-HP | Basis-Angriff | Gewicht | im Pokéball |
+#### Boden (`Ground`)
+| Name im Spiel (Deutsch) | Basis-HP | Basis-Angriff | Gewicht | im Pokéball |
 |---|---|---|---|---|
-| Digda | 12 | 8 | 0.8 kg | 0.08 kg |
-| Tragosso | 22 | 6 | 6.5 kg | 0.65 kg |
-| Sandan | 24 | 7 | 12.0 kg | 1.2 kg |
+| Diglett (Digda) | 12 | 8 | 0.8 kg | 0.08 kg |
+| Cubone (Tragosso) | 22 | 6 | 6.5 kg | 0.65 kg |
+| Sandshrew (Sandan) | 24 | 7 | 12.0 kg | 1.2 kg |
 | Phanpy | 32 | 8 | 33.5 kg | 3.35 kg |
 
-#### Gestein
-| Name | Basis-HP | Basis-Angriff | Gewicht | im Pokéball |
+#### Gestein (`Rock`)
+| Name im Spiel (Deutsch) | Basis-HP | Basis-Angriff | Gewicht | im Pokéball |
 |---|---|---|---|---|
-| Amonitas | 18 | 6 | 7.5 kg | 0.75 kg |
+| Omanyte (Amonitas) | 18 | 6 | 7.5 kg | 0.75 kg |
 | Kabuto | 20 | 7 | 11.5 kg | 1.15 kg |
-| Kleinstein | 28 | 6 | 20.0 kg | 2.0 kg |
+| Geodude (Kleinstein) | 28 | 6 | 20.0 kg | 2.0 kg |
 | Larvitar | 38 | 9 | 72.0 kg | 7.2 kg |
 
 #### Spezial
 | Name | Typ | Basis-HP | Basis-Angriff | Gewicht | Level | Ort |
 |---|---|---|---|---|---|---|
 | **Arceus** (Boss) | Normal | 40 | 8 | 320 kg | 50 | The Abyss – wird nicht gefangen |
-| Relaxo | – | – | – | 460 kg | 500 | Greenpath – nur Hindernis, nicht bekämpfbar |
+| Snorlax (Relaxo) | – | – | – | 460 kg | 500 | Greenpath – nur Hindernis, nicht bekämpfbar |
 
 Spawnen kann jedes Pokémon aus den fünf Typ-Listen (nicht der Boss, nicht Relaxo), zufällig ausgewählt und mit dem Level des Raums.
 
@@ -235,13 +243,15 @@ Angriff       = Basis-Angriff × Multiplikator
 Schaden       = Angriff × Typ-Faktor (2 / 1 / 0.5)
 ```
 
+HP und Schaden werden immer **abgerundet** (ganze Zahlen, z. B. 31.5 → 31).
+
 Beispiele: Level 5 → × 1.5, Level 10 → × 2 (100 % mehr), Level 30 → × 4, Level 50 → × 6.
 
 Jedes Pokémon, das in einem Kampf eingesetzt wurde und der Spieler **gewinnt**, steigt um **+2 Level**.
 
 ### Spawnen
 
-- Beim Spielstart wird in **jedem Raum ein Pokémon** mit dem Level des Raums geladen – ausser im **Greenpath**, in **The Abyss** (dort ist der Boss) und im **Exit**.
+- Beim Spielstart wird in **jedem Raum ein Pokémon** mit dem Level des Raums geladen – ausser in **Ashfall Valley** (Start), im **Greenpath**, in **The Abyss** (dort ist der Boss) und im **Exit**.
 - Ist der Raum leer, weil das Pokémon **besiegt** oder **weggescheucht** wurde, spawnt beim **nächsten Betreten** ein neues.
 
 ### Begegnung
@@ -250,16 +260,22 @@ Man wählt das Pokémon im Raum an und sieht schon **Level, HP und Schaden**. Da
 
 | Aktion | Folge |
 |---|---|
-| **Bekämpfen** | Kampf startet (siehe unten). Bei einem Sieg kommt das Pokémon in die **Sammlung** – aber nur, wenn das Tragegewicht noch reicht. Sonst flieht es. |
-| **Wegscheuchen** | Pokémon verschwindet, beim nächsten Betreten spawnt ein neues. |
+| **Bekämpfen** (`fight`) | Kampf startet (siehe unten). Bei einem Sieg kommt das Pokémon in die **Sammlung** – wenn das Tragegewicht reicht. Reicht es nicht, fragt das Spiel: ein Pokémon per Nummer freilassen, damit es passt, oder das neue Pokémon gehen lassen. |
+| **Wegscheuchen** (`scare`) | Pokémon verschwindet, beim nächsten Betreten spawnt ein neues. |
 | **In Ruhe lassen** | Pokémon bleibt im Raum. |
 
 Wegscheuchen hat bewusst keinen Nachteil: Wem das Pokémon nicht gefällt, der holt sich ein neues. Um weiterzukommen braucht man aber stärkere Pokémon, also muss man irgendwann kämpfen.
 
+### Boss (Arceus)
+
+- Arceus kann **nicht weggescheucht** werden.
+- Man muss nicht sofort kämpfen: Man kann The Abyss wieder verlassen (`back` / `go north`), stärker werden und später zurückkommen.
+- Nach dem Sieg ist The Abyss leer, es spawnt **nichts mehr** – und der Exit am White Palace ist offen.
+
 ### Kampf
 
-1. Der Spieler wählt **bis zu 3 Pokémon** aus seiner Sammlung, in einer Reihenfolge.
-2. Das **erste** kämpft gegen den Gegner. Die Angriffe gehen **abwechselnd hin und her**.
+1. Der Spieler wählt **bis zu 3 Pokémon** aus seiner Sammlung **per Nummer** (aus `team`), in einer Reihenfolge, z. B. `1 3 2`. Nummern statt Namen, weil man dasselbe Pokémon mehrfach haben kann.
+2. Das **erste** kämpft gegen den Gegner. Die Angriffe gehen **abwechselnd hin und her**, der **Spieler greift zuerst an**.
 3. Jedes Pokémon hat vorerst **nur einen Angriff** (keine verschiedenen Attacken oder Ultimates).
 4. Fällt ein Pokémon des Spielers, kommt das **nächste**.
 5. Der Kampf endet, wenn der **Gegner** oder **alle 3** Pokémon des Spielers besiegt sind.
@@ -284,10 +300,12 @@ Der Spieler hat **ein gemeinsames Maximalgewicht** für alles, was er trägt: **
 Gegenstände haben ein **Gewicht** und zählen zum [Tragegewicht](#tragegewicht). Der Spieler kann mehrere tragen. Gegenstände können aufgenommen (`take`) und wieder abgelegt (`drop`) werden.
 Die meisten „Gegenstände“, die man trägt, sind die **Pokémon in ihren Pokébällen**. Dazu kommen die zwei Story-Gegenstände:
 
-| Gegenstand | Gewicht | Fundort | Zweck |
-|---|---|---|---|
-| Zauberflöte | 0.5 kg | zufällige Stelle (siehe [Untersuchen](#untersuchen)) | `use flöte` im Greenpath weckt Relaxo |
-| Schlüssel | 0.2 kg | Queen's Gardens, offen am Boden | `use schlüssel` im White Palace öffnet The Abyss |
+| Gegenstand | im Spiel | Gewicht | Fundort | Zweck |
+|---|---|---|---|---|
+| Zauberflöte | `flute` | 0.5 kg | zufällige Stelle (siehe [Untersuchen](#untersuchen)) | `use flute` im Greenpath weckt Relaxo |
+| Schlüssel | `key` | 0.2 kg | Queen's Gardens, offen am Boden | `use key` im White Palace öffnet The Abyss |
+
+Beide werden beim Benutzen **verbraucht** (verschwinden aus dem Inventar). Der geöffnete Weg bleibt danach dauerhaft offen.
 
 Ein Raum speichert seine Gegenstände in einer **Liste** (`ArrayList<Item>`): Was der Spieler mit `drop` ablegt, bleibt im Raum liegen – auch mehrere Gegenstände pro Raum.
 
