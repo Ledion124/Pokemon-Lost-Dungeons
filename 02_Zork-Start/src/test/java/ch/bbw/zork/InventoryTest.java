@@ -13,8 +13,13 @@ import org.junit.jupiter.api.Test;
  */
 class InventoryTest {
 
+    /** Inventar, das getestet wird, vor jedem Test leer. */
     private Inventory inventory;
+
+    /** Normaler Gegenstand für die Tests. */
     private Item rock;
+
+    /** Schlüssel-Gegenstand (Flöte), um auch ein KeyItem zu testen. */
     private KeyItem flute;
 
     /** Erstellt vor jedem Test ein leeres Inventar und zwei Gegenstände. */
