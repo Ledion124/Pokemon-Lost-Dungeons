@@ -1,6 +1,8 @@
 package ch.bbw.zork;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,6 +35,9 @@ public class Room {
 
 	/** Richtung -> Sperrtext. Eine Richtung steht nur hier drin, solange sie gesperrt ist. */
 	private final Map<String, String> lockMessages = new HashMap<>();
+
+	/** Gegenstände, die offen im Raum liegen, in der Reihenfolge, in der sie hingelegt wurden. */
+	private final List<Item> items = new ArrayList<>();
 
 	/**
 	 * Erstellt einen Raum ohne Ausgänge.
@@ -183,6 +188,56 @@ public class Room {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Legt einen Gegenstand offen in den Raum.
+	 *
+	 * @param item der Gegenstand
+	 */
+	public void addItem(Item item) {
+		items.add(item);
+	}
+
+	/**
+	 * Nimmt den Gegenstand mit diesem Namen aus dem Raum.
+	 *
+	 * @param name Name des Gegenstands (Gross-/Kleinschreibung egal)
+	 * @return der entfernte Gegenstand oder null, wenn er nicht hier liegt
+	 */
+	public Item removeItem(String name) {
+		Item item = getItem(name);
+		if (item != null) {
+			items.remove(item);
+		}
+		return item;
+	}
+
+	/**
+	 * Sucht den Gegenstand mit diesem Namen, ohne ihn zu entfernen.
+	 *
+	 * @param name Name des Gegenstands (Gross-/Kleinschreibung egal)
+	 * @return der Gegenstand oder null, wenn er nicht hier liegt
+	 */
+	public Item getItem(String name) {
+		if (name == null) {
+			return null;
+		}
+		for (Item item : items) {
+			if (item.getName().equalsIgnoreCase(name)) {
+				return item;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Gibt alle Gegenstände im Raum als Kopie zurück.
+	 *
+	 * @return Kopie der Gegenstände
+	 */
+	public List<Item> getItems() {
+		return new ArrayList<>(items);
 	}
 
 	/**
