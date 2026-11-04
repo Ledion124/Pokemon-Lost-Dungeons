@@ -16,6 +16,7 @@ class RoomTest {
 	private Room south;
 	private Room west;
 
+	/** Erstellt vor jedem Test frische Räume ohne Ausgänge. */
 	@BeforeEach
 	void setUp() {
 		hall = new Room("Hall", "A big hall.", 5);
@@ -25,6 +26,7 @@ class RoomTest {
 		west = new Room("West", "West room.", 0);
 	}
 
+	/** Der Konstruktor speichert Name, Beschreibung und Level, ein neuer Raum ist kein Gewinn-Raum. */
 	@Test
 	void constructorSetsNameDescriptionAndLevel() {
 		assertEquals("Hall", hall.getName());
@@ -33,6 +35,7 @@ class RoomTest {
 		assertFalse(hall.isWinRoom());
 	}
 
+	/** null bei setExits wird nicht als Ausgang eingetragen. */
 	@Test
 	void nullExitIsNoExit() {
 		hall.setExits(north, null, null, null);
@@ -42,6 +45,7 @@ class RoomTest {
 		assertEquals("Exits: north", hall.exitString());
 	}
 
+	/** Ein gesperrter Ausgang blockiert hasExitTo, nextRoom liefert den Raum aber trotzdem. */
 	@Test
 	void lockedExitBlocksHasExitToButNextRoomStillWorks() {
 		hall.setExits(north, null, null, null);
@@ -53,6 +57,7 @@ class RoomTest {
 		assertSame(north, hall.nextRoom("north"));
 	}
 
+	/** Nach unlockExit ist der Ausgang wieder offen und hat keinen Sperrtext mehr. */
 	@Test
 	void unlockExitOpensItAgain() {
 		hall.setExits(north, null, null, null);
@@ -64,6 +69,7 @@ class RoomTest {
 		assertTrue(hall.hasExitTo(north));
 	}
 
+	/** Ein Ausgang, der nur auf einer Seite eingetragen ist, führt nicht zurück (Einbahnweg). */
 	@Test
 	void oneWayExitHasNoWayBack() {
 		hall.setExits(null, null, south, null);
@@ -72,6 +78,7 @@ class RoomTest {
 		assertFalse(south.hasExitTo(hall));
 	}
 
+	/** exitString listet die Ausgänge in der Reihenfolge north, east, south, west und markiert gesperrte. */
 	@Test
 	void exitStringHasFixedOrderAndMarksBlockedExits() {
 		hall.setExits(north, east, south, west);
@@ -80,6 +87,7 @@ class RoomTest {
 		assertEquals("Exits: north east south(blocked) west", hall.exitString());
 	}
 
+	/** longDescription hat das Format aus dem Plan: Name, Beschreibung, dann die Ausgänge. */
 	@Test
 	void longDescriptionHasNameDescriptionAndExits() {
 		hall.setExits(null, east, null, null);
@@ -87,6 +95,7 @@ class RoomTest {
 		assertEquals("You are in Hall. A big hall.\nExits: east", hall.longDescription());
 	}
 
+	/** setWinRoom(true) macht den Raum zum Gewinn-Raum. */
 	@Test
 	void winRoomCanBeSet() {
 		hall.setWinRoom(true);

@@ -15,11 +15,13 @@ class WorldBuilderTest {
 
 	private WorldBuilder world;
 
+	/** Baut vor jedem Test eine neue Welt mit festem Zufall. */
 	@BeforeEach
 	void setUp() {
 		world = new WorldBuilder(new Random(42));
 	}
 
+	/** Es gibt genau 13 Räume in der Reihenfolge der Raumnamen-Tabelle. */
 	@Test
 	void hasThirteenRoomsInTableOrder() {
 		List<Room> rooms = world.getRooms();
@@ -29,6 +31,7 @@ class WorldBuilderTest {
 		assertEquals(WorldBuilder.EXIT, rooms.get(12).getName());
 	}
 
+	/** getRoom findet einen Raum über den Namen und gibt bei unbekanntem Namen null zurück. */
 	@Test
 	void getRoomFindsRoomByName() {
 		assertNotNull(world.getRoom("King's Pass"));
@@ -36,11 +39,13 @@ class WorldBuilderTest {
 		assertNull(world.getRoom("Nowhere"));
 	}
 
+	/** Das Spiel startet in Ashfall Valley. */
 	@Test
 	void startRoomIsAshfallValley() {
 		assertSame(world.getRoom(WorldBuilder.ASHFALL_VALLEY), world.getStartRoom());
 	}
 
+	/** Die Pokémon-Level stimmen mit der Tabelle im Plan überein (Stichproben). */
 	@Test
 	void pokemonLevelsMatchPlan() {
 		assertEquals(0, world.getRoom(WorldBuilder.ASHFALL_VALLEY).getPokemonLevel());
@@ -49,6 +54,7 @@ class WorldBuilderTest {
 		assertEquals(0, world.getRoom(WorldBuilder.GREENPATH).getPokemonLevel());
 	}
 
+	/** Ein normaler Weg (Ashfall Valley - City of Tears) geht in beide Richtungen. */
 	@Test
 	void twoWayPathWorksInBothDirections() {
 		Room ashfall = world.getRoom(WorldBuilder.ASHFALL_VALLEY);
@@ -58,6 +64,7 @@ class WorldBuilderTest {
 		assertSame(ashfall, city.nextRoom("south"));
 	}
 
+	/** Bei den drei Einbahnwegen (ohne Exit) gibt es keinen Weg zurück. */
 	@Test
 	void oneWayPathsHaveNoWayBack() {
 		Room crossroads = world.getRoom(WorldBuilder.FORGOTTEN_CROSSROADS);
@@ -76,6 +83,7 @@ class WorldBuilderTest {
 		assertFalse(treasures.hasExitTo(kingsPass));
 	}
 
+	/** Greenpath east, White Palace south und north sind gesperrt, andere Ausgänge nicht. */
 	@Test
 	void threeExitsAreLocked() {
 		Room greenpath = world.getRoom(WorldBuilder.GREENPATH);
@@ -88,6 +96,7 @@ class WorldBuilderTest {
 		assertFalse(whitePalace.isLocked("east"));
 	}
 
+	/** Nur der Raum Exit ist der Gewinn-Raum. */
 	@Test
 	void onlyExitIsWinRoom() {
 		for (Room room : world.getRooms()) {
