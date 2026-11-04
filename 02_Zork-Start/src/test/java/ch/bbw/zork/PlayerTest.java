@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Tests für {@link Player}: Bewegung und Zurückgehen mit {@code back}.
+ * Tests für {@link Player}: Bewegung, Zurückgehen mit {@code back} und Gewicht.
  */
 class PlayerTest {
 
@@ -111,5 +111,49 @@ class PlayerTest {
 		assertSame(b, player.goBack());
 		assertSame(a, player.goBack());
 		assertNull(player.goBack());
+	}
+
+	/** Ein neuer Spieler hat leeres Inventar, keine Pokémon und wiegt 0 kg. */
+	@Test
+	@DisplayName("Neuer Spieler ist leer und wiegt 0 kg")
+	void newPlayerIsEmpty() {
+		assertTrue(player.getInventory().isEmpty());
+		assertEquals(0, player.getPokemons().size());
+		assertEquals(0.0, player.getTotalWeight(), 0.0001);
+	}
+
+	/** Das Gesamtgewicht zählt Items und das Tragegewicht der Pokémon zusammen. */
+	@Test
+	@DisplayName("Gesamtgewicht zählt Items und Pokémon im Pokéball")
+	void totalWeightCountsItemsAndPokemons() {
+		player.getInventory().add(new Item("rock", "A rock.", 2.5));
+		player.getPokemons().add(new Pokemon("Testmon", PokemonType.NORMAL, 10, 5, 30.0, 5));
+		assertEquals(2.5 + 3.0, player.getTotalWeight(), 0.0001);
+	}
+
+	/** Genau bis 20 kg kann der Spieler tragen. */
+	@Test
+	@DisplayName("canCarry ist an der 20-kg-Grenze true")
+	void canCarryUpToMaxWeight() {
+		player.getInventory().add(new Item("rock", "A rock.", 19.5));
+		assertTrue(player.canCarry(0.5));
+	}
+
+	/** Schon knapp über 20 kg kann der Spieler nicht mehr tragen. */
+	@Test
+	@DisplayName("canCarry ist knapp über 20 kg false")
+	void cannotCarryOverMaxWeight() {
+		player.getInventory().add(new Item("rock", "A rock.", 19.5));
+		assertFalse(player.canCarry(0.51));
+	}
+
+	/** Rundungsfehler bei Kommazahlen führen nicht zu einem falschen false. */
+	@Test
+	@DisplayName("canCarry verträgt Rundungsfehler")
+	void canCarryToleratesRounding() {
+		for (int i = 0; i < 199; i++) {
+			player.getInventory().add(new Item("pebble" + i, "A pebble.", 0.1));
+		}
+		assertTrue(player.canCarry(0.1));
 	}
 }
