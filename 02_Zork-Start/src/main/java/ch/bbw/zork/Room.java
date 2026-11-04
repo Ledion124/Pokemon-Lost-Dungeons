@@ -281,7 +281,8 @@ public class Room {
 
 	/**
 	 * Lange Beschreibung mit Name, Beschreibung und Ausgängen.
-	 * Liegen Gegenstände im Raum, kommt die Zeile {@code Items: flute, key} dazu.
+	 * Liegen Gegenstände im Raum, kommt die Zeile {@code Items: flute, key} dazu,
+	 * gibt es Stellen zum Untersuchen, die Zeile {@code You could search: ash, stump}.
 	 * Weitere Zeilen (Pokémon) werden später hinten angehängt.
 	 *
 	 * @return mehrzeilige Beschreibung des Raums
@@ -292,7 +293,23 @@ public class Room {
 		if (!items.isEmpty()) {
 			stringBuilder.append("\n").append(itemString());
 		}
+		if (!hidingSpots.isEmpty()) {
+			stringBuilder.append("\n").append(hidingSpotString());
+		}
 		return stringBuilder.toString();
+	}
+
+	/**
+	 * Alle Stellen im Raum, die man untersuchen kann, durch Komma getrennt.
+	 *
+	 * @return z. B. "You could search: ash, stump, crack"
+	 */
+	private String hidingSpotString() {
+		List<String> names = new ArrayList<>();
+		for (HidingSpot hidingSpot : hidingSpots) {
+			names.add(hidingSpot.getName());
+		}
+		return "You could search: " + String.join(", ", names);
 	}
 
 	/**
