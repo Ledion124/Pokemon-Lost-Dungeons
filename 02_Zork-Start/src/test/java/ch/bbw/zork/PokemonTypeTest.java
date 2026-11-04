@@ -65,4 +65,47 @@ class PokemonTypeTest {
     void displayNameIsReadable() {
         assertEquals("Ground", PokemonType.GROUND.getDisplayName());
     }
+
+    @Test
+    @DisplayName("Typ-Tabelle ist symmetrisch")
+    void typeTableIsSymmetric() {
+        for (PokemonType attacker : PokemonType.values()) {
+            for (PokemonType defender : PokemonType.values()) {
+                if (attacker.getMultiplier(defender) == 2.0) {
+                    assertEquals(0.5, defender.getMultiplier(attacker), attacker + " gegen " + defender);
+                }
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("Jeder Typ ist gegen 2 stark und gegen 2 schwach")
+    void eachTypeHasTwoStrengthsAndTwoWeaknesses() {
+        for (PokemonType attacker : PokemonType.values()) {
+            if (attacker == PokemonType.NORMAL) {
+                continue;
+            }
+            int strong = 0;
+            int weak = 0;
+            for (PokemonType defender : PokemonType.values()) {
+                double multiplier = attacker.getMultiplier(defender);
+                if (multiplier == 2.0) {
+                    strong++;
+                } else if (multiplier == 0.5) {
+                    weak++;
+                }
+            }
+            assertEquals(2, strong, attacker.toString());
+            assertEquals(2, weak, attacker.toString());
+        }
+    }
+
+    @Test
+    @DisplayName("Normal ist in beide Richtungen immer neutral")
+    void normalIsAlwaysNeutralBothWays() {
+        for (PokemonType type : PokemonType.values()) {
+            assertEquals(1.0, PokemonType.NORMAL.getMultiplier(type));
+            assertEquals(1.0, type.getMultiplier(PokemonType.NORMAL));
+        }
+    }
 }
