@@ -16,13 +16,21 @@ public class Room {
 	/** Alle Richtungen in der Reihenfolge, in der sie ausgegeben werden. */
 	private static final String[] DIRECTIONS = {"north", "east", "south", "west"};
 
+	/** Name des Raums, z. B. "Ashfall Valley". */
 	private final String name;
+
+	/** Englische Beschreibung für die Spielausgabe. */
 	private final String description;
+
+	/** Level der wilden Pokémon in diesem Raum (0 = hier spawnt nichts). */
 	private final int pokemonLevel;
+
+	/** true, wenn man durch Betreten dieses Raums gewinnt. */
 	private boolean winRoom;
 
 	/** Richtung -> Nachbarraum. Enthält nur echte Ausgänge, auch gesperrte. */
 	private final Map<String, Room> exits = new HashMap<>();
+
 	/** Richtung -> Sperrtext. Eine Richtung steht nur hier drin, solange sie gesperrt ist. */
 	private final Map<String, String> lockMessages = new HashMap<>();
 
@@ -40,6 +48,8 @@ public class Room {
 	}
 
 	/**
+	 * Gibt den Namen des Raums zurück.
+	 *
 	 * @return Name des Raums
 	 */
 	public String getName() {
@@ -47,6 +57,8 @@ public class Room {
 	}
 
 	/**
+	 * Gibt die Beschreibung des Raums zurück.
+	 *
 	 * @return Beschreibung des Raums
 	 */
 	public String getDescription() {
@@ -54,6 +66,8 @@ public class Room {
 	}
 
 	/**
+	 * Gibt das Level der Pokémon zurück, die hier spawnen.
+	 *
 	 * @return Level der Pokémon in diesem Raum (0 = hier spawnt nichts)
 	 */
 	public int getPokemonLevel() {
@@ -61,6 +75,8 @@ public class Room {
 	}
 
 	/**
+	 * Prüft, ob dieser Raum der Gewinn-Raum ist.
+	 *
 	 * @return true, wenn man das Spiel gewinnt, sobald man diesen Raum betritt
 	 */
 	public boolean isWinRoom() {
@@ -134,6 +150,8 @@ public class Room {
 	}
 
 	/**
+	 * Prüft, ob der Ausgang in diese Richtung gesperrt ist.
+	 *
 	 * @param direction Richtung des Ausgangs
 	 * @return true, wenn der Ausgang in diese Richtung gesperrt ist
 	 */
@@ -142,6 +160,8 @@ public class Room {
 	}
 
 	/**
+	 * Gibt den Text zurück, der bei einem gesperrten Ausgang angezeigt wird.
+	 *
 	 * @param direction Richtung des Ausgangs
 	 * @return Sperrtext oder null, wenn der Ausgang offen ist
 	 */

@@ -10,22 +10,40 @@ import java.util.Random;
  */
 public class WorldBuilder {
 
+	/** Raumname: Startraum. */
 	public static final String ASHFALL_VALLEY = "Ashfall Valley";
+	/** Raumname: verlassene Stadt im Regen. */
 	public static final String CITY_OF_TEARS = "City of Tears";
+	/** Raumname: Kreuzung mit Einbahnweg nach Süden in den Fog Canyon. */
 	public static final String FORGOTTEN_CROSSROADS = "Forgotten Crossroads";
+	/** Raumname: Schlucht im Nebel, Einbahnweg nach Osten zurück ins Ashfall Valley. */
 	public static final String FOG_CANYON = "Fog Canyon";
+	/** Raumname: Palast mit den Sperren nach The Abyss (Süden) und Exit (Norden). */
 	public static final String WHITE_PALACE = "White Palace";
+	/** Raumname: Raum des Bosses Arceus. */
 	public static final String THE_ABYSS = "The Abyss";
+	/** Raumname: Schatzkammer. */
 	public static final String ANCIENT_TREASURES = "Ancient Treasures";
+	/** Raumname: Bergpass mit Einbahnweg nach Westen zu den Ancient Treasures. */
 	public static final String KINGS_PASS = "King's Pass";
+	/** Raumname: Garten, in dem der Schlüssel liegt. */
 	public static final String QUEENS_GARDENS = "Queen's Gardens";
+	/** Raumname: ruhiger Friedhof. */
 	public static final String RESTING_GROUNDS = "Resting Grounds";
+	/** Raumname: Pfad, auf dem Relaxo den Weg nach Osten versperrt. */
 	public static final String GREENPATH = "Greenpath";
+	/** Raumname: unterirdische Kanäle. */
 	public static final String ROYALE_WATERWAYS = "Royale Waterways";
+	/** Raumname: Ausgang, wer ihn betritt, gewinnt. */
 	public static final String EXIT = "Exit";
 
+	/** Zufallsgenerator, mit dem in Block 3 die Flöte versteckt wird. */
 	private final Random random;
+
+	/** Alle Räume in der Reihenfolge der Raumnamen-Tabelle. */
 	private final List<Room> rooms = new ArrayList<>();
+
+	/** Raum, in dem das Spiel beginnt (Ashfall Valley). */
 	private final Room startRoom;
 
 	/**
@@ -91,6 +109,9 @@ public class WorldBuilder {
 	/**
 	 * Erstellt einen Raum und nimmt ihn in die Liste aller Räume auf.
 	 *
+	 * @param name         Name des Raums (eine der Konstanten oben)
+	 * @param description  englische Beschreibung des Raums
+	 * @param pokemonLevel Level der Pokémon, die hier spawnen (0 = keine)
 	 * @return der neue Raum
 	 */
 	private Room addRoom(String name, String description, int pokemonLevel) {
@@ -100,6 +121,8 @@ public class WorldBuilder {
 	}
 
 	/**
+	 * Gibt alle Räume als Kopie zurück. Änderungen an der Liste verändern die Welt nicht.
+	 *
 	 * @return Kopie aller Räume in der Reihenfolge der Raumnamen-Tabelle
 	 */
 	public List<Room> getRooms() {
@@ -122,6 +145,8 @@ public class WorldBuilder {
 	}
 
 	/**
+	 * Gibt den Raum zurück, in dem das Spiel beginnt.
+	 *
 	 * @return Startraum (Ashfall Valley)
 	 */
 	public Room getStartRoom() {

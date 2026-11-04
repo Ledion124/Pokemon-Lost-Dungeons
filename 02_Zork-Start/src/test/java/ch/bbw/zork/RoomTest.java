@@ -11,10 +11,19 @@ import org.junit.jupiter.api.Test;
  */
 class RoomTest {
 
+	/** Raum, dessen Ausgänge und Sperren getestet werden. */
 	private Room hall;
+
+	/** Nachbarraum im Norden. */
 	private Room north;
+
+	/** Nachbarraum im Osten. */
 	private Room east;
+
+	/** Nachbarraum im Süden. */
 	private Room south;
+
+	/** Nachbarraum im Westen. */
 	private Room west;
 
 	/** Erstellt vor jedem Test frische Räume ohne Ausgänge. */

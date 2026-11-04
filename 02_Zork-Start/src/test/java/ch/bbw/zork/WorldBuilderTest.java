@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
  */
 class WorldBuilderTest {
 
+	/** Die gebaute Spielwelt, wird vor jedem Test neu erstellt. */
 	private WorldBuilder world;
 
 	/** Baut vor jedem Test eine neue Welt mit festem Zufall. */
