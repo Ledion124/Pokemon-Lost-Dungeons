@@ -7,42 +7,33 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests für die Klasse BossPokemon und Pokedex.createBoss().
+ * Tests für die Klasse BossPokemon.
  */
 class BossPokemonTest {
 
-    /** Der Boss Arceus, wird vor jedem Test neu erstellt. */
-    private BossPokemon arceus;
+    /** Ein Boss (Normal, 40 HP, 8 ATK, 320 kg, Level 50), wird vor jedem Test neu erstellt. */
+    private BossPokemon boss;
 
     /**
-     * Erstellt vor jedem Test einen frischen Arceus über den Pokedex.
+     * Erstellt vor jedem Test einen frischen Boss direkt über den Konstruktor.
      */
     @BeforeEach
     void setUp() {
-        arceus = Pokedex.createBoss();
+        boss = new BossPokemon("Arceus", PokemonType.NORMAL, 40, 8, 320.0, 50);
     }
 
     /**
-     * createBoss erstellt Arceus mit Typ Normal und Level 50.
+     * Der Konstruktor gibt alle Werte an Pokemon weiter, der Boss startet mit vollen HP.
      */
     @Test
-    @DisplayName("createBoss erstellt Arceus, Normal, Level 50")
-    void createBossReturnsArceus() {
-        assertEquals("Arceus", arceus.getName());
-        assertEquals(PokemonType.NORMAL, arceus.getType());
-        assertEquals(50, arceus.getLevel());
-        assertEquals(320.0, arceus.getWeight(), 0.001);
-    }
-
-    /**
-     * Auf Level 50 hat Arceus 240 HP und 48 Angriff (Faktor 6) und startet mit vollen HP.
-     */
-    @Test
-    @DisplayName("Arceus hat 240 HP und 48 Angriff")
-    void bossHasStatsForLevelFifty() {
-        assertEquals(240, arceus.getMaxHp());
-        assertEquals(240, arceus.getCurrentHp());
-        assertEquals(48, arceus.getAttack());
+    @DisplayName("Konstruktor gibt die Werte an Pokemon weiter")
+    void constructorPassesValuesToPokemon() {
+        assertEquals("Arceus", boss.getName());
+        assertEquals(PokemonType.NORMAL, boss.getType());
+        assertEquals(50, boss.getLevel());
+        assertEquals(240, boss.getMaxHp());
+        assertEquals(240, boss.getCurrentHp());
+        assertEquals(48, boss.getAttack());
     }
 
     /**
@@ -51,7 +42,7 @@ class BossPokemonTest {
     @Test
     @DisplayName("Boss kann nicht verscheucht werden")
     void bossCannotBeScared() {
-        assertFalse(arceus.canBeScared());
+        assertFalse(boss.canBeScared());
     }
 
     /**
@@ -60,18 +51,19 @@ class BossPokemonTest {
     @Test
     @DisplayName("Polymorphie: als Pokemon gespeichert, trotzdem nicht verscheuchbar")
     void canBeScaredIsOverriddenEvenAsPokemon() {
-        Pokemon pokemon = arceus;
+        Pokemon pokemon = boss;
+        Pokemon normal = new Pokemon("Charmander", PokemonType.FIRE, 20, 6, 8.5, 5);
         assertFalse(pokemon.canBeScared());
-        assertTrue(Pokedex.create("Charmander", 5).canBeScared());
+        assertTrue(normal.canBeScared());
     }
 
     /**
      * Der Sieg-Text nennt den Namen des Bosses und den freien Weg zum Ausgang.
      */
     @Test
-    @DisplayName("Sieg-Text nennt Arceus und den Ausgang")
+    @DisplayName("Sieg-Text nennt den Namen und den Ausgang")
     void defeatMessageMentionsNameAndExit() {
-        String message = arceus.getDefeatMessage();
+        String message = boss.getDefeatMessage();
         assertTrue(message.startsWith("Arceus"));
         assertTrue(message.contains("exit"));
     }
@@ -82,41 +74,21 @@ class BossPokemonTest {
     @Test
     @DisplayName("Boss nimmt Schaden und kann besiegt werden")
     void bossCanTakeDamageAndFaint() {
-        arceus.takeDamage(40);
-        assertEquals(200, arceus.getCurrentHp());
-        arceus.takeDamage(1000);
-        assertTrue(arceus.isFainted());
+        boss.takeDamage(40);
+        assertEquals(200, boss.getCurrentHp());
+        boss.takeDamage(1000);
+        assertTrue(boss.isFainted());
     }
 
     /**
-     * Normal ist neutral: Arceus macht gegen jeden Typ normalen Schaden (48).
+     * Normal ist neutral: der Boss macht gegen jeden Typ normalen Schaden (48).
      */
     @Test
-    @DisplayName("Arceus macht gegen jeden Typ normalen Schaden")
+    @DisplayName("Boss macht gegen jeden Typ normalen Schaden")
     void bossDoesNeutralDamage() {
-        assertEquals(48, arceus.getDamageAgainst(Pokedex.create("Charmander", 5)));
-        assertEquals(48, arceus.getDamageAgainst(Pokedex.create("Geodude", 5)));
-    }
-
-    /**
-     * Arceus ist nicht im normalen Katalog und kann daher nicht zufällig erscheinen.
-     */
-    @Test
-    @DisplayName("Arceus ist nicht im normalen Katalog")
-    void bossIsNotInCatalog() {
-        assertFalse(Pokedex.getAllNames().contains("Arceus"));
-        assertNull(Pokedex.create("Arceus", 50));
-    }
-
-    /**
-     * Jeder Aufruf von createBoss erstellt einen neuen Boss mit vollen HP.
-     */
-    @Test
-    @DisplayName("createBoss erstellt jedes Mal einen neuen Boss")
-    void createBossReturnsNewObjectEachTime() {
-        arceus.takeDamage(100);
-        BossPokemon fresh = Pokedex.createBoss();
-        assertNotSame(arceus, fresh);
-        assertEquals(240, fresh.getCurrentHp());
+        Pokemon charmander = new Pokemon("Charmander", PokemonType.FIRE, 20, 6, 8.5, 5);
+        Pokemon geodude = new Pokemon("Geodude", PokemonType.ROCK, 28, 6, 20.0, 5);
+        assertEquals(48, boss.getDamageAgainst(charmander));
+        assertEquals(48, boss.getDamageAgainst(geodude));
     }
 }
