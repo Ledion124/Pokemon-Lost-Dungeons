@@ -125,4 +125,42 @@ class PokedexTest {
         Pokedex.getAllNames().clear();
         assertEquals(20, Pokedex.getAllNames().size());
     }
+
+    /**
+     * createBoss erstellt Arceus mit Typ Normal, Level 50 und den Werten aus der Tabelle.
+     */
+    @Test
+    @DisplayName("createBoss erstellt Arceus, Normal, Level 50")
+    void createBossReturnsArceus() {
+        BossPokemon arceus = Pokedex.createBoss();
+        assertEquals("Arceus", arceus.getName());
+        assertEquals(PokemonType.NORMAL, arceus.getType());
+        assertEquals(50, arceus.getLevel());
+        assertEquals(320.0, arceus.getWeight(), 0.001);
+        assertEquals(240, arceus.getMaxHp());
+        assertEquals(48, arceus.getAttack());
+    }
+
+    /**
+     * Arceus ist nicht im normalen Katalog und kann daher nicht zufällig erscheinen.
+     */
+    @Test
+    @DisplayName("Arceus ist nicht im normalen Katalog")
+    void bossIsNotInCatalog() {
+        assertFalse(Pokedex.getAllNames().contains("Arceus"));
+        assertNull(Pokedex.create("Arceus", 50));
+    }
+
+    /**
+     * Jeder Aufruf von createBoss erstellt einen neuen Boss mit vollen HP.
+     */
+    @Test
+    @DisplayName("createBoss erstellt jedes Mal einen neuen Boss")
+    void createBossReturnsNewObjectEachTime() {
+        BossPokemon first = Pokedex.createBoss();
+        first.takeDamage(100);
+        BossPokemon second = Pokedex.createBoss();
+        assertNotSame(first, second);
+        assertEquals(240, second.getCurrentHp());
+    }
 }
