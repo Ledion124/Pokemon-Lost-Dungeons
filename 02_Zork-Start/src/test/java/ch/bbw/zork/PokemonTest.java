@@ -3,6 +3,7 @@ package ch.bbw.zork;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -25,6 +26,7 @@ class PokemonTest {
      * Ein neues Pokémon startet mit vollen HP und berechnet HP und Angriff aus dem Level.
      */
     @Test
+    @DisplayName("Neues Pokémon hat volle HP und richtige Werte")
     void newPokemonHasFullHpAndCorrectStats() {
         assertEquals(30, charmander.getMaxHp());
         assertEquals(30, charmander.getCurrentHp());
@@ -35,6 +37,7 @@ class PokemonTest {
      * Die Getter geben die Werte aus dem Konstruktor zurück.
      */
     @Test
+    @DisplayName("Getter geben die Werte aus dem Konstruktor zurück")
     void gettersReturnConstructorValues() {
         assertEquals("Charmander", charmander.getName());
         assertEquals(PokemonType.FIRE, charmander.getType());
@@ -46,6 +49,7 @@ class PokemonTest {
      * Im Pokéball wiegt ein Pokémon ein Zehntel seines echten Gewichts.
      */
     @Test
+    @DisplayName("Gewicht im Pokéball ist ein Zehntel")
     void carryWeightIsTenthOfWeight() {
         assertEquals(0.85, charmander.getCarryWeight(), 0.001);
     }
@@ -54,6 +58,7 @@ class PokemonTest {
      * Schaden zieht HP ab, das Pokémon ist danach noch nicht besiegt.
      */
     @Test
+    @DisplayName("takeDamage zieht HP ab")
     void takeDamageReducesHp() {
         charmander.takeDamage(10);
         assertEquals(20, charmander.getCurrentHp());
@@ -64,6 +69,7 @@ class PokemonTest {
      * Zu viel Schaden setzt die HP auf 0 und nicht ins Negative, das Pokémon ist besiegt.
      */
     @Test
+    @DisplayName("takeDamage setzt HP nie unter 0")
     void takeDamageNeverBelowZero() {
         charmander.takeDamage(100);
         assertEquals(0, charmander.getCurrentHp());
@@ -74,6 +80,7 @@ class PokemonTest {
      * Heilen setzt die HP wieder auf das Maximum.
      */
     @Test
+    @DisplayName("heal setzt HP auf das Maximum")
     void healRestoresFullHp() {
         charmander.takeDamage(25);
         charmander.heal();
@@ -84,6 +91,7 @@ class PokemonTest {
      * Level-Up erhöht das Level um 2, steigert die Werte und heilt vollständig.
      */
     @Test
+    @DisplayName("levelUp gibt +2 Level und volle HP")
     void levelUpAddsTwoLevelsAndHeals() {
         charmander.takeDamage(10);
         charmander.levelUp();
@@ -96,6 +104,7 @@ class PokemonTest {
      * Feuer gegen Pflanze macht doppelten Schaden (9 × 2 = 18).
      */
     @Test
+    @DisplayName("Feuer gegen Pflanze macht doppelten Schaden")
     void fireDoesDoubleDamageAgainstGrass() {
         Pokemon bulbasaur = new Pokemon("Bulbasaur", PokemonType.GRASS, 22, 5, 6.9, 5);
         assertEquals(18, charmander.getDamageAgainst(bulbasaur));
@@ -105,6 +114,7 @@ class PokemonTest {
      * Feuer gegen Gestein macht nur halben Schaden, abgerundet (9 × 0.5 = 4.5 → 4).
      */
     @Test
+    @DisplayName("Feuer gegen Gestein macht halben Schaden")
     void fireDoesHalfDamageAgainstRock() {
         Pokemon geodude = new Pokemon("Geodude", PokemonType.ROCK, 28, 6, 20.0, 5);
         assertEquals(4, charmander.getDamageAgainst(geodude));
@@ -114,6 +124,7 @@ class PokemonTest {
      * Jeder Angriff macht mindestens 1 Schaden, auch wenn die Rechnung 0 ergibt.
      */
     @Test
+    @DisplayName("Schaden ist mindestens 1")
     void damageIsAtLeastOne() {
         Pokemon weak = new Pokemon("Weak", PokemonType.FIRE, 10, 1, 1.0, 0);
         Pokemon geodude = new Pokemon("Geodude", PokemonType.ROCK, 28, 6, 20.0, 5);
@@ -124,6 +135,7 @@ class PokemonTest {
      * Normale Pokémon können verscheucht werden.
      */
     @Test
+    @DisplayName("Normales Pokémon kann verscheucht werden")
     void normalPokemonCanBeScared() {
         assertTrue(charmander.canBeScared());
     }
@@ -132,6 +144,7 @@ class PokemonTest {
      * Die Textausgabe zeigt Name, Typ, Level, HP, Angriff und Tragegewicht mit Punkt.
      */
     @Test
+    @DisplayName("toString zeigt alle Werte mit Punkt")
     void toStringShowsAllValues() {
         assertEquals("Charmander (Fire) Lv 5 - HP 30/30, ATK 9, 0.85 kg", charmander.toString());
     }
