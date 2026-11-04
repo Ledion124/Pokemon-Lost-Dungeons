@@ -69,7 +69,7 @@ public class Game {
 			Command command = parser.getCommand();
 			finished = processCommand(command);
 		}
-		System.out.println("Danke fürs Spielen. Auf Wiedersehen!");
+		System.out.println("Thanks for playing. Goodbye!");
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class Game {
 	 */
 	private boolean processCommand(Command command) {
 		if (command.isUnknown()) {
-			System.out.println("Das verstehe ich nicht...");
+			System.out.println("I don't understand that.");
 			return false;
 		}
 
@@ -100,8 +100,7 @@ public class Game {
 				printHelp();
 				break;
 			case "go":
-				goRoom(command);
-				break;
+				return goRoom(command);
 			case "back":
 				goBack();
 				break;
@@ -163,35 +162,55 @@ public class Game {
 	}
 
 	/**
-	 * Geht in die angegebene Richtung, falls dort ein Ausgang ist.
+	 * Geht in die angegebene Richtung. Gibt es dort keinen Ausgang oder ist er
+	 * gesperrt, bleibt der Spieler stehen und bekommt eine Meldung. Wer den
+	 * Gewinnraum betritt, hat gewonnen.
 	 *
 	 * @param command Befehl mit der Richtung als zweitem Wort
+	 * @return true, wenn der Spieler gewonnen hat und das Spiel endet
 	 */
-	private void goRoom(Command command) {
+	private boolean goRoom(Command command) {
 		if (!command.hasSecondWord()) {
 			System.out.println("Go where?");
-		} else {
-
-			String direction = command.getSecondWord();
-
-			// Try to leave current room.
-			Room nextRoom = player.getCurrentRoom().nextRoom(direction);
-
-			if (nextRoom == null)
-				System.out.println("There is no door!");
-			else {
-				player.moveTo(nextRoom);
-				System.out.println(nextRoom.longDescription());
-			}
+			return false;
 		}
+
+		String direction = command.getSecondWord();
+		Room currentRoom = player.getCurrentRoom();
+		Room nextRoom = currentRoom.nextRoom(direction);
+
+		if (nextRoom == null) {
+			System.out.println("There is no way in that direction.");
+			return false;
+		}
+		if (currentRoom.isLocked(direction)) {
+			System.out.println(currentRoom.getLockMessage(direction));
+			return false;
+		}
+
+		player.moveTo(nextRoom);
+		System.out.println(nextRoom.longDescription());
+		onEnterRoom(nextRoom);
+
+		if (nextRoom.isWinRoom()) {
+			System.out.println("You climb out into the daylight. You escaped the Lost Dungeons! You win!");
+			return true;
+		}
+		return false;
 	}
 
 	/**
-	 * Geht zurück in den Raum, aus dem man gekommen ist.
-	 * TODO (Engel): über Stack&lt;Room&gt; im Player umsetzen.
+	 * Geht zurück in den Raum, aus dem man gekommen ist. Über Einbahnwege und
+	 * gesperrte Ausgänge geht das nicht (prüft {@link Player#canGoBack()}).
 	 */
 	private void goBack() {
-		System.out.println("'back' ist noch nicht implementiert.");
+		Room room = player.goBack();
+		if (room == null) {
+			System.out.println("The way back is blocked.");
+			return;
+		}
+		System.out.println(room.longDescription());
+		onEnterRoom(room);
 	}
 
 	// ===================== Engel (Block 3) =====================
