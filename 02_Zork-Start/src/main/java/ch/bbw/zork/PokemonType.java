@@ -47,49 +47,32 @@ public enum PokemonType {
      * @return 2.0 bei Vorteil, 0.5 bei Nachteil, sonst 1.0
      */
     public double getMultiplier(PokemonType defender) {
-        if (this == NORMAL || defender == NORMAL) {
-            return 1.0;
+        if (beats(defender)) {
+            return 2.0;
         }
-        if (this == FIRE) {
-            if (defender == GRASS || defender == ICE) {
-                return 2.0;
-            }
-            if (defender == GROUND || defender == ROCK) {
-                return 0.5;
-            }
-        }
-        if (this == GRASS) {
-            if (defender == GROUND || defender == ROCK) {
-                return 2.0;
-            }
-            if (defender == FIRE || defender == ICE) {
-                return 0.5;
-            }
-        }
-        if (this == ICE) {
-            if (defender == GRASS || defender == GROUND) {
-                return 2.0;
-            }
-            if (defender == FIRE || defender == ROCK) {
-                return 0.5;
-            }
-        }
-        if (this == GROUND) {
-            if (defender == FIRE || defender == ROCK) {
-                return 2.0;
-            }
-            if (defender == GRASS || defender == ICE) {
-                return 0.5;
-            }
-        }
-        if (this == ROCK) {
-            if (defender == FIRE || defender == ICE) {
-                return 2.0;
-            }
-            if (defender == GRASS || defender == GROUND) {
-                return 0.5;
-            }
+        if (defender.beats(this)) {
+            return 0.5;
         }
         return 1.0;
+    }
+
+    /**
+     * Prüft, ob dieser Typ den anderen Typ schlägt (Tabelle in docs/Idee.md).
+     * Die Tabelle ist symmetrisch: Schlägt A den Typ B, verliert B gegen A.
+     * Darum reicht diese eine Methode für Vorteil und Nachteil.
+     * {@link #NORMAL} schlägt keinen Typ und wird von keinem geschlagen.
+     *
+     * @param other der andere Typ
+     * @return true, wenn dieser Typ gegen den anderen doppelten Schaden macht
+     */
+    private boolean beats(PokemonType other) {
+        return switch (this) {
+            case FIRE -> other == GRASS || other == ICE;
+            case GRASS -> other == GROUND || other == ROCK;
+            case ICE -> other == GRASS || other == GROUND;
+            case GROUND -> other == FIRE || other == ROCK;
+            case ROCK -> other == FIRE || other == ICE;
+            default -> false;
+        };
     }
 }
