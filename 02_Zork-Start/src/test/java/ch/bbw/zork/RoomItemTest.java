@@ -152,4 +152,45 @@ class RoomItemTest {
 
         assertEquals(1, room.getHidingSpots().size());
     }
+
+    // ===================== longDescription =====================
+
+    /** Ohne Items und Verstecke bleibt die Beschreibung wie vorher (nur Name und Ausgänge). */
+    @Test
+    @DisplayName("longDescription ohne Items und Verstecke unverändert")
+    void longDescriptionWithoutItemsOrSpots() {
+        assertEquals("You are in Hall. A big hall.\nExits:", room.longDescription());
+    }
+
+    /** Liegen Items im Raum, steht hinten die Zeile mit allen Items. */
+    @Test
+    @DisplayName("longDescription zeigt Items")
+    void longDescriptionShowsItems() {
+        room.addItem(flute);
+        room.addItem(key);
+
+        assertTrue(room.longDescription().endsWith("\nItems: flute, key"));
+    }
+
+    /** Gibt es Verstecke, steht hinten die Zeile mit allen Verstecken. */
+    @Test
+    @DisplayName("longDescription zeigt Verstecke")
+    void longDescriptionShowsHidingSpots() {
+        room.addHidingSpot(new HidingSpot("ash", "a pile of ash"));
+        room.addHidingSpot(new HidingSpot("stump", "an old tree stump"));
+        room.addHidingSpot(new HidingSpot("crack", "a crack in the wall"));
+
+        assertTrue(room.longDescription().endsWith("\nYou could search: ash, stump, crack"));
+    }
+
+    /** Mit Items und Verstecken kommen zuerst die Items, dann die Verstecke. */
+    @Test
+    @DisplayName("longDescription zeigt erst Items, dann Verstecke")
+    void longDescriptionShowsItemsBeforeHidingSpots() {
+        room.addItem(key);
+        room.addHidingSpot(new HidingSpot("ash", "a pile of ash"));
+
+        assertEquals("You are in Hall. A big hall.\nExits:\nItems: key\nYou could search: ash",
+                room.longDescription());
+    }
 }
