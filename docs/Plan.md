@@ -45,7 +45,7 @@ Damit das ohne Warten und ohne Merge-Konflikte klappt:
 
 ### Raumnamen
 
-Diese Strings werden von allen drei verwendet (`getRoom(name)`, `KeyItem`, Boss-Logik). Engel legt sie in Block 1 zusätzlich als Konstanten in `WorldBuilder` an (`WorldBuilder.WHITE_PALACE` usw.). In Block 1 benutzen Castelberg und Sakaj die String-Werte, ab Block 2 dürfen alle die Konstanten nehmen.
+Diese Strings werden von allen drei verwendet (`getRoom(name)`, `KeyItem`, Boss-Logik). Engel legt sie in Block 1 zusätzlich als Konstanten in `WorldBuilder` an (`WorldBuilder.WHITE_PALACE` usw.). In Block 1 benutzen Castelberg und Sakaj die String-Werte, ab Block 2 nehmen alle die Konstanten.
 
 | Konstante | Name | `pokemonLevel` |
 |---|---|---|
@@ -141,12 +141,9 @@ Alle Klassen sind reine Fachklassen ohne Abhängigkeit zu den anderen. `Game.jav
 - `getName()`, `getDescription()`, `getPokemonLevel()`
 - `isWinRoom()`, `setWinRoom(boolean winRoom)`
 - `setExits(Room north, Room east, Room south, Room west)` – `null` heisst kein Ausgang, wird **nicht** in die Map eingetragen
-- `setExit(String direction, Room room)`
 - `nextRoom(String direction)` → Nachbarraum **auch wenn gesperrt**, `null` wenn kein Ausgang (die Sperre prüft `Game`)
-- `getExits()` → `Map<String, Room>` mit allen echten Ausgängen (gesperrte inklusive)
 - Sperren: `lockExit(String direction, String message)`, `unlockExit(String direction)`, `isLocked(String direction)`, `getLockMessage(String direction)` (`null` wenn offen)
 - `hasExitTo(Room room)` → `true`, wenn ein **offener** Ausgang in diesen Raum führt
-- `shortDescription()` → Name
 - `longDescription()` → so aufgebaut (Castelberg und Sakaj hängen später Zeilen **hinten** an):
   ```
   You are in <name>. <description>
@@ -164,7 +161,6 @@ Alle Klassen sind reine Fachklassen ohne Abhängigkeit zu den anderen. `Game.jav
 - `getRooms()` → `List<Room>` in der Reihenfolge der Raumnamen-Tabelle
 - `getRoom(String name)` → Raum oder `null`
 - `getStartRoom()` → Ashfall Valley
-- `getRandom()` → das `Random`
 
 **`Game`**: Konstruktor nutzt `new WorldBuilder(new Random())`, `currentRoom = world.getStartRoom()`. Die 13 Raum-Felder fallen weg, neues Feld `world`.
 
@@ -176,7 +172,6 @@ Alle Klassen sind reine Fachklassen ohne Abhängigkeit zu den anderen. `Game.jav
 **`Item`**
 - `Item(String name, String description, double weight)`, `getName()`, `getDescription()`, `getWeight()`
 - `toString()` → `flute (0.50 kg)`
-- Konstanten: `public static final String FLUTE = "flute"`, `KEY = "key"`
 
 **`KeyItem extends Item`** – ein Item, das in einem bestimmten Raum einen Ausgang öffnet
 - `KeyItem(String name, String description, double weight, String targetRoom, String direction)`
@@ -186,8 +181,8 @@ Alle Klassen sind reine Fachklassen ohne Abhängigkeit zu den anderen. `Game.jav
 
 **`Inventory`**
 - intern `ArrayList<Item>`
-- `add(Item item)`, `remove(String name)` → entferntes `Item` oder `null`, `get(String name)` → `Item` oder `null`, `contains(String name)`
-- `getItems()` → `List<Item>` (Kopie), `getTotalWeight()`, `isEmpty()`, `size()`
+- `add(Item item)`, `remove(String name)` → entferntes `Item` oder `null`, `get(String name)` → `Item` oder `null`
+- `getItems()` → `List<Item>` (Kopie), `getTotalWeight()`, `isEmpty()`
 - **Kein** Maximalgewicht (prüft der `Player`)
 
 ### Sakaj – Pokémon
@@ -213,7 +208,7 @@ Alle Klassen sind reine Fachklassen ohne Abhängigkeit zu den anderen. `Game.jav
 
 **`PokemonCollection`** – Zugriff per **Nummer**, 1-basiert
 - `add(Pokemon)`, `get(int number)` → `Pokemon` oder `null`, `remove(int number)` → entferntes `Pokemon` oder `null`
-- `size()`, `isEmpty()`, `getAll()` → `List<Pokemon>` (Kopie), `healAll()`, `getTotalWeight()` (Summe `getCarryWeight()`)
+- `size()`, `getAll()` → `List<Pokemon>` (Kopie), `healAll()`, `getTotalWeight()` (Summe `getCarryWeight()`)
 
 **Ende Block 1:** Alle Fachklassen da und getestet. Spiel läuft wie vorher, aber mit `WorldBuilder`.
 
@@ -280,7 +275,7 @@ private void release(Command command) { }
 **Dateien:** `Room.java` (nur Item-/Versteck-Teil, Engel fasst `Room` in Block 2 nicht an), `HidingSpot.java` (neu), `RoomItemTest`, `HidingSpotTest`
 
 **`Room`** (neu dazu)
-- `addItem(Item)`, `removeItem(String name)` → `Item` oder `null`, `getItem(String name)`, `hasItem(String name)`, `getItems()` → `List<Item>` (Kopie)
+- `addItem(Item)`, `removeItem(String name)` → `Item` oder `null`, `getItem(String name)` → `Item` oder `null`, `getItems()` → `List<Item>` (Kopie)
 - `addHidingSpot(HidingSpot)`, `getHidingSpot(String name)` → `HidingSpot` oder `null`, `getHidingSpots()` → `List<HidingSpot>` (Kopie)
 - `longDescription()` hängt **hinten** an (nur wenn vorhanden):
   ```
@@ -291,7 +286,7 @@ private void release(Command command) { }
 **`HidingSpot`**
 - `HidingSpot(String name, String description)` – `name` ist das Befehlswort (`ash`), `description` englisch (`a pile of ash`)
 - `getName()`, `getDescription()`
-- `hideItem(Item)`, `search()` → verstecktes `Item` oder `null`; danach ist es leer und `isSearched()` → `true`
+- `hideItem(Item)`, `search()` → verstecktes `Item` oder `null`; danach ist es leer
 - `hasHiddenItem()`
 
 ### Sakaj – Boss & Kampf
@@ -353,14 +348,14 @@ Jeder füllt **nur die Methoden in seinem Abschnitt** von `Game.java`. Keine neu
 **Dateien:** `Room.java` (nur Pokémon-Teil, Castelberg fasst `Room` in Block 3 nicht an), `Game.java` (Abschnitt Sakaj), `RoomPokemonTest`
 
 **`Room`** (neu dazu)
-- `getWildPokemon()` → `Pokemon` oder `null`, `setWildPokemon(Pokemon)`, `removeWildPokemon()`, `hasWildPokemon()`
-- `isSpawnRoom()` → `pokemonLevel > 0 && !name.equals("The Abyss")`
+- `getWildPokemon()` → `Pokemon` oder `null`, `setWildPokemon(Pokemon)`, `removeWildPokemon()`
+- `isSpawnRoom()` → `pokemonLevel > 0 && !name.equals(WorldBuilder.THE_ABYSS)`
 - `longDescription()` hängt **hinten** an (nur wenn vorhanden): `A wild <toString des Pokémon> appears!`
 
 **`Game`** (Abschnitt Sakaj)
 - `spawnAll()`: in jeden Raum mit `isSpawnRoom()` ein `Pokedex.createRandom(room.getPokemonLevel(), random)`
 - `onEnterRoom(room)`:
-  - The Abyss: Boss setzen, wenn kein Pokémon im Raum **und** der Boss noch nicht besiegt ist. „Boss besiegt“ heisst: `world.getRoom("White Palace").isLocked("north") == false` (kein neues Feld nötig)
+  - The Abyss: Boss setzen, wenn kein Pokémon im Raum **und** der Boss noch nicht besiegt ist. „Boss besiegt“ heisst: `world.getRoom(WorldBuilder.WHITE_PALACE).isLocked("north") == false` (kein neues Feld nötig)
   - sonst: wenn `isSpawnRoom()` und kein Pokémon da → neues spawnen
 - `fight()`:
   - kein Pokémon im Raum → `There is nothing to fight here.`
@@ -368,7 +363,7 @@ Jeder füllt **nur die Methoden in seinem Abschnitt** von `Game.java`. Keine neu
   - Eingabe ungültig (keine Zahl, Nummer nicht vorhanden, doppelt, mehr als 3, leer) → `Invalid team. The fight is cancelled.`, nichts passiert
   - `new Battle(team, wild).fight()`, danach jede Zeile aus `getLog()` ausgeben
   - **Niederlage** → `restartGame()`
-  - **Sieg gegen Boss** → `getDefeatMessage()`, `removeWildPokemon()`, `world.getRoom("White Palace").unlockExit("north")`, nicht fangen
+  - **Sieg gegen Boss** → `getDefeatMessage()`, `removeWildPokemon()`, `world.getRoom(WorldBuilder.WHITE_PALACE).unlockExit("north")`, nicht fangen
   - **Sieg sonst** → `removeWildPokemon()`; passt `wild.getCarryWeight()` (`player.canCarry`) → in die Sammlung; sonst `team` zeigen und fragen `Release a Pokémon by number to make room, or press Enter to let <name> go:`. Nach dem Freilassen nochmals prüfen; passt es immer noch nicht → `<name> runs away.`
 - `scare()`: kein Pokémon → `There is nothing to scare away.`; `!canBeScared()` → `Arceus does not move an inch.`; sonst `removeWildPokemon()` und `<name> runs away.`
 - `showTeam()`: nummerierte Liste `1) <toString>`, am Ende Gesamtgewicht der Pokémon
@@ -416,15 +411,7 @@ Danach gemeinsam: Bewertungsraster (`docs/Bewertung.md`) Punkt für Punkt prüfe
 - Keine Dateien aus `target/` oder `.idea/` committen
 
 ## Aufwand
-| Block | pro Person |
-|---|---|
-| 0 | 15 Min. (Engel) |
-| 1 | ~5 h |
-| 2 | ~6 h |
-| 3 | ~6 h |
-| 4 | ~4 h |
-
-Dazu Mergen/Bugfixing und Präsentation → **ca. 22–25 h pro Person**.
+Blöcke 1–4 zusammen ca. 21 h (Stunden stehen bei jedem Block), dazu Mergen/Bugfixing und Präsentation → **ca. 22–25 h pro Person**.
 
 ## Präsentation (10 Min.)
 1. Engel: Story, Karte, Sperren, `back`, `map`, Gewonnen (~3 Min.)
