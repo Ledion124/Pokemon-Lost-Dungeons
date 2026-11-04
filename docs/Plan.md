@@ -15,7 +15,7 @@ Block N:   Engel ──┐
 Damit das ohne Warten und ohne Merge-Konflikte klappt:
 
 1. **Man braucht nur, was in einem früheren Block gebaut wurde.** Was ein anderer im *gleichen* Block baut, braucht man nie.
-2. **Jede Datei hat pro Block genau einen Besitzer** (siehe [Datei-Besitz](#datei-besitz)). Ausnahme `Game.java` in Block 3: dort hat jeder einen **eigenen Abschnitt** mit seinen Methoden.
+2. **Jede Datei hat pro Block genau einen Besitzer** (siehe [Datei-Besitz](#datei-besitz)). In Block 3 hat jeder dafür eine **eigene Actions-Klasse** (`WorldActions`, `ItemActions`, `PokemonActions`), `Game` gibt die Befehle nur weiter.
 3. **Die Schnittstellen in diesem Plan sind verbindlich.** Wer etwas ändern will, fragt zuerst im Gruppenchat und passt dann diesen Plan an.
 
 ## Verantwortungsbereiche
@@ -42,7 +42,7 @@ Damit das ohne Warten und ohne Merge-Konflikte klappt:
   void lockedExitBlocksHasExitTo() { ... }
   ```
 - Zufall **immer** über einen `Random`-Parameter, in Tests `new Random(42)`. Nie `Math.random()`.
-- Tests prüfen nur Fachklassen (nicht `Game`, da alles `private` und Konsole).
+- Tests prüfen nur Fachklassen (nicht `Game`, da alles `private` und Konsole). Die Actions-Klassen sind Fachklassen: getestet wird der **Zustand danach** (z. B. Item liegt im Inventar), Eingaben kommen über `new Parser(new ByteArrayInputStream(...))`.
 
 ### Sprache
 - **Im Spiel (Konsole) alles Englisch**: Ausgaben, Raumnamen, Beschreibungen, Items, Pokémon.
@@ -226,7 +226,7 @@ Alle Klassen sind reine Fachklassen ohne Abhängigkeit zu den anderen. `Game.jav
 Hier baut **nur Engel** an `Game.java`, `CommandWords.java` und `Parser.java` und legt dabei **alle Stubs für Block 3** an.
 
 ### Engel – Spieler, Bewegung, Stubs
-**Dateien:** `Player.java`, `Game.java`, `CommandWords.java`, `Parser.java`, `PlayerTest`
+**Dateien:** `Player.java`, `Game.java`, `CommandWords.java`, `Parser.java`, `WorldActions.java`, `ItemActions.java`, `PokemonActions.java` (nur Stubs), `PlayerTest`, `ParserTest`, `CommandWordsTest`
 
 **`Player`**
 - `Player(Room startRoom)` – leeres `Inventory`, leere `PokemonCollection`, leerer `Stack<Room>`
@@ -252,29 +252,31 @@ Hier baut **nur Engel** an `Game.java`, `CommandWords.java` und `Parser.java` un
   - kein Ausgang → Text; gesperrt → `getLockMessage`; sonst `player.moveTo`, Beschreibung, `onEnterRoom(room)`, bei `isWinRoom()` Gewonnen-Text und `true`
 - `goBack()`: über `player.goBack()`, sonst `The way back is blocked.`; danach Beschreibung und `onEnterRoom(room)`
 - Texte aus [Spieltexte](#spieltexte) für unbekannten Befehl und Spielende übernehmen
-- **Stubs für Block 3**: Methoden ohne Inhalt (nur `System.out.println("'<befehl>' is not implemented yet.");`, bei Hooks leer), mit JavaDoc und `TODO (<Name>, Block 3)`. Alle schon in `processCommand` verdrahtet. Die Methoden stehen **nach Besitzer gruppiert** in drei Abschnitten am Ende der Klasse:
+- **Stubs für Block 3**: Methoden ohne Inhalt (nur `System.out.println("'<befehl>' is not implemented yet.");`, bei Hooks leer), mit JavaDoc und `TODO (<Name>, Block 3)`. Alle schon in `processCommand` verdrahtet. Damit `Game` klein bleibt (Bewertung: Klasse < 300 Zeilen, eine Verantwortung), stehen sie **nicht in `Game`**, sondern in **drei eigenen Klassen**, eine pro Besitzer. `Game` erstellt sie in `initGame()` und ruft sie nur auf:
 
 ```java
-// ===================== Engel (Block 3) =====================
-private void useItem(Command command) { }
-private void showMap() { }
-private void chooseStarter() { }
+// WorldActions (Engel)           new WorldActions(parser, world, player)
+public void useItem(Command command)
+public void showMap()
+public void chooseStarter()
 
-// ===================== Castelberg (Block 3) =====================
-private void look() { }
-private void search(Command command) { }
-private void takeItem(Command command) { }
-private void dropItem(Command command) { }
-private void showInventory() { }
+// ItemActions (Castelberg)       new ItemActions(player)
+public void look()
+public void search(Command command)
+public void takeItem(Command command)
+public void dropItem(Command command)
+public void showInventory()
 
-// ================== Sakaj (Block 3) ===================
-private void spawnAll() { }
-private void onEnterRoom(Room room) { }
-private void fight() { }
-private void scare() { }
-private void showTeam() { }
-private void release(Command command) { }
+// PokemonActions (Sakaj)         new PokemonActions(parser, world, player, random)
+public void spawnAll()
+public void onEnterRoom(Room room)
+public boolean fight()            // true = verloren, Game ruft dann restartGame()
+public void scare()
+public void showTeam()
+public void release(Command command)
 ```
+
+Braucht jemand in Block 3 ein weiteres Objekt (z. B. `world` in `ItemActions`), kommt es als Konstruktor-Parameter dazu; den Aufruf in `Game.initGame()` darf der Besitzer der Klasse dafür anpassen.
 
 **Tests u. a.:** `back` nach normalem Weg geht, `back` nach Einbahn geht nicht, `back` bei leerem Stack geht nicht, `canCarry` an der 20-kg-Grenze, Gewicht zählt Items + Pokémon im Pokéball.
 
@@ -323,10 +325,10 @@ private void release(Command command) { }
 
 ## Block 3 – Ins Spiel einbauen (je ~6 h)
 
-Jeder füllt **nur die Methoden in seinem Abschnitt** von `Game.java`. Keine neuen Felder, kein Umbau von `processCommand`, nichts ausserhalb des eigenen Abschnitts. Hilfsmethoden kommen **in den eigenen Abschnitt**.
+Jeder füllt **nur die Methoden in seiner eigenen Actions-Klasse**. `processCommand` in `Game` wird nicht umgebaut. Hilfsmethoden kommen **in die eigene Klasse**. Jede Actions-Klasse bekommt **5–8 Tests** (wie alle Fachklassen).
 
 ### Engel – Benutzen, Karte, Starter, Texte
-**Dateien:** `Game.java` (Abschnitt Engel + `printWelcome`, `printHelp`)
+**Dateien:** `WorldActions.java`, `WorldActionsTest` (neu), `Game.java` (nur `printWelcome`, `printHelp`)
 
 - `useItem(command)`
   - ohne zweites Wort → `Use what?`; nicht im Inventar → `You don't have that.`; kein `KeyItem` → `You can't use that here.`
@@ -335,10 +337,10 @@ Jeder füllt **nur die Methoden in seinem Abschnitt** von `Game.java`. Keine neu
 - `showMap()`: für jeden Raum aus `world.getRooms()` eine Zeile: Name, Items im Raum, gesperrte Ausgänge; aktueller Raum mit `>` am Anfang markiert
 - `chooseStarter()`: zeigt `1) Cubchoo (Ice)  2) Charmander (Fire)  3) Bulbasaur (Grass)`, liest mit `parser.readLine()`, bei ungültiger Eingabe nochmals fragen, bei leerer Eingabe (Ende) Nummer 1. Pokémon über `Pokedex.create(name, 5)` in `player.getPokemons()`
 - `printWelcome()` und `printHelp()`: Story und Ziel **auf Englisch**, `printHelp` listet alle Befehle mit kurzer Erklärung
-- alle übrigen deutschen Texte in `Game` ausserhalb der Abschnitte von Castelberg und Sakaj übersetzen
+- alle übrigen deutschen Texte in `Game` übersetzen
 
 ### Castelberg – Item-Befehle, Items in der Welt
-**Dateien:** `Game.java` (Abschnitt Castelberg), `WorldBuilder.java` (nur neue Methode `placeItems()` + ihr Aufruf als **letzte Zeile** im Konstruktor), `WorldBuilderItemsTest` (neu, nicht `WorldBuilderTest` ändern)
+**Dateien:** `ItemActions.java`, `ItemActionsTest` (neu), `WorldBuilder.java` (nur neue Methode `placeItems()` + ihr Aufruf als **letzte Zeile** im Konstruktor), `WorldBuilderItemsTest` (neu, nicht `WorldBuilderTest` ändern)
 
 - `takeItem(command)`: ohne zweites Wort → `Take what?`; nicht im Raum → `There is no <name> here.`; `!player.canCarry(weight)` → `That is too heavy. Drop something or release a Pokémon first.`; sonst aus dem Raum ins Inventar
 - `dropItem(command)`: ohne zweites Wort → `Drop what?`; nicht im Inventar → `You don't have that.`; sonst in den Raum
@@ -352,14 +354,14 @@ Jeder füllt **nur die Methoden in seinem Abschnitt** von `Game.java`. Keine neu
 - **Tests:** Schlüssel liegt in Queen's Gardens, jeder Raum ausser Exit hat Verstecke, Flöte liegt genau einmal in einem der 7 Räume, mit `new Random(42)` immer am selben Ort
 
 ### Sakaj – Pokémon im Spiel
-**Dateien:** `Room.java` (nur Pokémon-Teil, Castelberg fasst `Room` in Block 3 nicht an), `Game.java` (Abschnitt Sakaj), `RoomPokemonTest`
+**Dateien:** `Room.java` (nur Pokémon-Teil, Castelberg fasst `Room` in Block 3 nicht an), `PokemonActions.java`, `PokemonActionsTest` (neu), `RoomPokemonTest`
 
 **`Room`** (neu dazu)
 - `getWildPokemon()` → `Pokemon` oder `null`, `setWildPokemon(Pokemon)`, `removeWildPokemon()`
 - `isSpawnRoom()` → `pokemonLevel > 0 && !name.equals(WorldBuilder.THE_ABYSS)`
 - `longDescription()` hängt **hinten** an (nur wenn vorhanden): `A wild <toString des Pokémon> appears!`
 
-**`Game`** (Abschnitt Sakaj)
+**`PokemonActions`**
 - `spawnAll()`: in jeden Raum mit `isSpawnRoom()` ein `Pokedex.createRandom(room.getPokemonLevel(), random)`
 - `onEnterRoom(room)`:
   - The Abyss: Boss setzen, wenn kein Pokémon im Raum **und** der Boss noch nicht besiegt ist. „Boss besiegt“ heisst: `world.getRoom(WorldBuilder.WHITE_PALACE).isLocked("north") == false` (kein neues Feld nötig)
@@ -369,7 +371,7 @@ Jeder füllt **nur die Methoden in seinem Abschnitt** von `Game.java`. Keine neu
   - `showTeam()` ausgeben, dann `Choose up to 3 Pokémon by number (e.g. 1 3 2):`, `parser.readLine()`
   - Eingabe ungültig (keine Zahl, Nummer nicht vorhanden, doppelt, mehr als 3, leer) → `Invalid team. The fight is cancelled.`, nichts passiert
   - `new Battle(team, wild).fight()`, danach jede Zeile aus `getLog()` ausgeben
-  - **Niederlage** → `restartGame()`
+  - **Niederlage** → `return true` (`Game` ruft dann `restartGame()` auf)
   - **Sieg gegen Boss** → `getDefeatMessage()`, `removeWildPokemon()`, `world.getRoom(WorldBuilder.WHITE_PALACE).unlockExit("north")`, nicht fangen
   - **Sieg sonst** → `removeWildPokemon()`; passt `wild.getCarryWeight()` (`player.canCarry`) → in die Sammlung; sonst `team` zeigen und fragen `Release a Pokémon by number to make room, or press Enter to let <name> go:`. Nach dem Freilassen nochmals prüfen; passt es immer noch nicht → `<name> runs away.`
 - `scare()`: kein Pokémon → `There is nothing to scare away.`; `!canBeScared()` → `Arceus does not move an inch.`; sonst `removeWildPokemon()` und `<name> runs away.`
@@ -402,7 +404,10 @@ Danach gemeinsam: Bewertungsraster (`docs/Bewertung.md`) Punkt für Punkt prüfe
 |---|---|---|---|---|
 | `Room` | Engel | Castelberg (Items, Verstecke) | Sakaj (Pokémon) | Bugfix im eigenen Teil |
 | `WorldBuilder` | Engel | – | Castelberg (`placeItems`) | Bugfix im eigenen Teil |
-| `Game` | Engel (Konstruktor) | Engel | **alle**, je eigener Abschnitt | Bugfix im eigenen Abschnitt |
+| `Game` | Engel (Konstruktor) | Engel | Engel (Texte); in `initGame` darf jeder den Aufruf seiner Klasse anpassen | Engel |
+| `WorldActions` | – | Engel (Stubs) | Engel | Engel |
+| `ItemActions` | – | Engel (Stubs) | Castelberg | Castelberg |
+| `PokemonActions` | – | Engel (Stubs) | Sakaj | Sakaj |
 | `Player`, `Parser`, `CommandWords` | – | Engel | – | Engel |
 | `Item`, `KeyItem`, `Inventory`, `HidingSpot` | Castelberg | Castelberg | – | Castelberg |
 | `PokemonType`, `Pokemon`, `Pokedex`, `PokemonCollection`, `Battle`, `BossPokemon` | Sakaj | Sakaj | – | Sakaj |
