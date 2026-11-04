@@ -3,45 +3,89 @@ package ch.bbw.zork;
 import java.util.Random;
 
 /**
- * Class Game - the main class of the "Zork" game.
+ * Hauptklasse des Spiels: baut Welt und Spieler auf, liest Befehle und gibt
+ * sie weiter. Gehen ({@code go}, {@code back}), Hilfe, Gewinnen und Neustart
+ * erledigt {@code Game} selbst; alle anderen Befehle übernehmen
+ * {@link WorldActions}, {@link ItemActions} und {@link PokemonActions}.
  *
  * Author:  Michael Kolling, 1.1, March 2000
  * refactoring: Rinaldo Lanza, September 2020
  */
-
 public class Game {
 
+	/** Liest die Befehle des Spielers. */
 	private Parser parser;
+
+	/** Zufallsgenerator für die ganze Spielwelt (Pokémon, Flöten-Versteck). */
+	private Random random;
+
+	/** Die Spielwelt mit allen Räumen, wird bei jedem (Neu-)Start neu gebaut. */
 	private WorldBuilder world;
-	private Room currentRoom;
+
+	/** Der Spieler mit aktuellem Raum, Inventar und Pokémon. */
+	private Player player;
+
+	/** Befehle use, map und die Starter-Auswahl. */
+	private WorldActions worldActions;
+
+	/** Befehle look, search, take, drop und inventory. */
+	private ItemActions itemActions;
+
+	/** Befehle fight, scare, team, release und das Spawnen der Pokémon. */
+	private PokemonActions pokemonActions;
 
 	/**
-	 * Erstellt das Spiel: baut die Welt über den {@link WorldBuilder} und setzt den Startraum.
+	 * Erstellt das Spiel. Die Welt und der Spieler werden erst in
+	 * {@link #initGame()} angelegt, damit ein Neustart dasselbe tun kann.
 	 */
 	public Game() {
 		parser = new Parser(System.in);
-		world = new WorldBuilder(new Random());
-		currentRoom = world.getStartRoom();
+		random = new Random();
 	}
 
 	/**
-	 *  Main play routine.  Loops until end of play.
+	 * Baut eine neue Welt, setzt einen neuen Spieler in den Startraum,
+	 * erstellt die Befehls-Klassen, lässt die Pokémon spawnen und den Starter wählen.
+	 */
+	private void initGame() {
+		world = new WorldBuilder(random);
+		player = new Player(world.getStartRoom());
+		worldActions = new WorldActions(parser, world, player);
+		itemActions = new ItemActions(player);
+		pokemonActions = new PokemonActions(parser, world, player, random);
+		pokemonActions.spawnAll();
+		worldActions.chooseStarter();
+	}
+
+	/**
+	 * Startet das Spiel nach einer Niederlage neu: gibt den Niederlage-Text aus,
+	 * baut alles neu auf und zeigt den Startraum.
+	 */
+	private void restartGame() {
+		System.out.println("All your Pokémon have fainted. Everything goes dark... The game starts over.");
+		initGame();
+		System.out.println(player.getCurrentRoom().longDescription());
+	}
+
+	/**
+	 * Hauptschleife: Begrüssung, Spiel aufbauen, Startraum zeigen und dann
+	 * Befehle ausführen, bis das Spiel endet.
 	 */
 	public void play() {
 		printWelcome();
+		initGame();
+		System.out.println(player.getCurrentRoom().longDescription());
 
-		// Enter the main command loop.  Here we repeatedly read commands and
-		// execute them until the game is over.
 		boolean finished = false;
 		while (!finished) {
 			Command command = parser.getCommand();
 			finished = processCommand(command);
 		}
-		System.out.println("Danke fürs Spielen. Auf Wiedersehen!");
+		System.out.println("Thanks for playing. Goodbye!");
 	}
 
 	/**
-	 * Gibt die Begrüssung und die Beschreibung des Startraums aus.
+	 * Gibt die Begrüssung mit der Story aus (ohne Raumbeschreibung).
 	 */
 	private void printWelcome() {
 		System.out.println();
@@ -49,55 +93,49 @@ public class Game {
 		System.out.println("Finde den Weg zurück ans Tageslicht.");
 		System.out.println("Tippe 'help', wenn du Hilfe brauchst.");
 		System.out.println();
-		System.out.println(currentRoom.longDescription());
 	}
 
 	/**
-	 * Führt einen Befehl aus.
+	 * Führt einen Befehl aus, indem er an die zuständige Methode oder Klasse
+	 * weitergegeben wird.
 	 *
 	 * @param command der eingegebene Befehl
-	 * @return true, wenn das Spiel beendet werden soll
+	 * @return true, wenn das Spiel beendet werden soll (gewonnen oder quit)
 	 */
 	private boolean processCommand(Command command) {
 		if (command.isUnknown()) {
-			System.out.println("Das verstehe ich nicht...");
+			System.out.println("I don't understand that.");
 			return false;
 		}
 
 		switch (command.getCommandWord()) {
-			case "help":
-				printHelp();
-				break;
-			case "go":
-				goRoom(command);
-				break;
-			case "back":
-				goBack();
-				break;
-			case "look":
-				look();
-				break;
-			case "take":
-				takeItem(command);
-				break;
-			case "drop":
-				dropItem(command);
-				break;
-			case "inventory":
-				showInventory();
-				break;
-			case "map":
-				showMap();
-				break;
-			case "quit":
-				if (command.hasSecondWord()) {
-					System.out.println("Quit what?");
-				} else {
-					return true; // signal that we want to quit
+			case "help" -> printHelp();
+			case "go" -> {
+				return goRoom(command);
+			}
+			case "back" -> goBack();
+			case "look" -> itemActions.look();
+			case "search" -> itemActions.search(command);
+			case "take" -> itemActions.takeItem(command);
+			case "drop" -> itemActions.dropItem(command);
+			case "inventory" -> itemActions.showInventory();
+			case "use" -> worldActions.useItem(command);
+			case "map" -> worldActions.showMap();
+			case "fight" -> {
+				if (pokemonActions.fight()) {
+					restartGame();
 				}
-				break;
-			default:
-				break;
+			}
+			case "scare" -> pokemonActions.scare();
+			case "team" -> pokemonActions.showTeam();
+			case "release" -> pokemonActions.release(command);
+			case "quit" -> {
+				if (!command.hasSecondWord()) {
+					return true;
+				}
+				System.out.println("Quit what?");
+			}
+			default -> { }
 		}
 		return false;
 	}
@@ -114,78 +152,54 @@ public class Game {
 	}
 
 	/**
-	 * Geht in die angegebene Richtung, falls dort ein Ausgang ist.
+	 * Geht in die angegebene Richtung. Gibt es dort keinen Ausgang oder ist er
+	 * gesperrt, bleibt der Spieler stehen und bekommt eine Meldung. Wer den
+	 * Gewinnraum betritt, hat gewonnen.
 	 *
 	 * @param command Befehl mit der Richtung als zweitem Wort
+	 * @return true, wenn der Spieler gewonnen hat und das Spiel endet
 	 */
-	private void goRoom(Command command) {
+	private boolean goRoom(Command command) {
 		if (!command.hasSecondWord()) {
 			System.out.println("Go where?");
-		} else {
-
-			String direction = command.getSecondWord();
-
-			// Try to leave current room.
-			Room nextRoom = currentRoom.nextRoom(direction);
-
-			if (nextRoom == null)
-				System.out.println("There is no door!");
-			else {
-				currentRoom = nextRoom;
-				System.out.println(currentRoom.longDescription());
-			}
+			return false;
 		}
+
+		String direction = command.getSecondWord();
+		Room currentRoom = player.getCurrentRoom();
+		Room nextRoom = currentRoom.nextRoom(direction);
+
+		if (nextRoom == null) {
+			System.out.println("There is no way in that direction.");
+			return false;
+		}
+		if (currentRoom.isLocked(direction)) {
+			System.out.println(currentRoom.getLockMessage(direction));
+			return false;
+		}
+
+		player.moveTo(nextRoom);
+		System.out.println(nextRoom.longDescription());
+		pokemonActions.onEnterRoom(nextRoom);
+
+		if (nextRoom.isWinRoom()) {
+			System.out.println("You climb out into the daylight. You escaped the Lost Dungeons! You win!");
+			return true;
+		}
+		return false;
 	}
 
 	/**
-	 * Geht zurück in den Raum, aus dem man gekommen ist.
-	 * TODO (Engel): über Stack&lt;Room&gt; im Player umsetzen.
+	 * Geht zurück in den Raum, aus dem man gekommen ist. Über Einbahnwege und
+	 * gesperrte Ausgänge geht das nicht (prüft {@link Player#canGoBack()}).
 	 */
 	private void goBack() {
-		System.out.println("'back' ist noch nicht implementiert.");
-	}
-
-	/**
-	 * Zeigt den aktuellen Raum mit allen Gegenständen an.
-	 * TODO (Sakaj): Gegenstände im Raum ausgeben.
-	 */
-	private void look() {
-		System.out.println(currentRoom.longDescription());
-	}
-
-	/**
-	 * Nimmt einen Gegenstand aus dem Raum ins Inventar.
-	 * TODO (Castelberg): mit Gewichtsprüfung umsetzen.
-	 *
-	 * @param command Befehl mit dem Namen des Gegenstands als zweitem Wort
-	 */
-	private void takeItem(Command command) {
-		System.out.println("'take' ist noch nicht implementiert.");
-	}
-
-	/**
-	 * Legt einen Gegenstand aus dem Inventar in den Raum.
-	 * TODO (Castelberg): umsetzen.
-	 *
-	 * @param command Befehl mit dem Namen des Gegenstands als zweitem Wort
-	 */
-	private void dropItem(Command command) {
-		System.out.println("'drop' ist noch nicht implementiert.");
-	}
-
-	/**
-	 * Zeigt alle getragenen Gegenstände und das Gesamtgewicht an.
-	 * TODO (Castelberg): umsetzen.
-	 */
-	private void showInventory() {
-		System.out.println("'inventory' ist noch nicht implementiert.");
-	}
-
-	/**
-	 * Zeigt alle Räume mit ihren Gegenständen an, der aktuelle Raum ist markiert.
-	 * TODO (Engel): über ArrayList&lt;Room&gt; umsetzen.
-	 */
-	private void showMap() {
-		System.out.println("'map' ist noch nicht implementiert.");
+		Room room = player.goBack();
+		if (room == null) {
+			System.out.println("The way back is blocked.");
+			return;
+		}
+		System.out.println(room.longDescription());
+		pokemonActions.onEnterRoom(room);
 	}
 }
