@@ -32,22 +32,12 @@ class PokemonCollectionTest {
     }
 
     /**
-     * Eine neue Sammlung ist leer.
-     */
-    @Test
-    void newCollectionIsEmpty() {
-        assertTrue(collection.isEmpty());
-        assertEquals(0, collection.size());
-    }
-
-    /**
-     * Nach dem Hinzufügen ist die Sammlung nicht mehr leer und zählt richtig.
+     * Nach dem Hinzufügen zählt die Sammlung richtig.
      */
     @Test
     void addIncreasesSize() {
         collection.add(charmander);
         collection.add(bulbasaur);
-        assertFalse(collection.isEmpty());
         assertEquals(2, collection.size());
     }
 

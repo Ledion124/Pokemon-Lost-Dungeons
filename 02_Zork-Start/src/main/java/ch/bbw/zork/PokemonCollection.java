@@ -57,15 +57,6 @@ public class PokemonCollection {
     }
 
     /**
-     * Prüft, ob die Sammlung leer ist.
-     *
-     * @return true, wenn keine Pokémon in der Sammlung sind
-     */
-    public boolean isEmpty() {
-        return pokemons.isEmpty();
-    }
-
-    /**
      * Gibt eine Kopie aller Pokémon der Sammlung zurück.
      * Änderungen an der Kopie verändern die Sammlung nicht.
      *
