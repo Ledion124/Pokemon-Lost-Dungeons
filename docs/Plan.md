@@ -34,6 +34,13 @@ Damit das ohne Warten und ohne Merge-Konflikte klappt:
 - Java **17**, Maven, JUnit **5** (schon im `pom.xml`). Alles im Ordner `02_Zork-Start`.
 - Code: `02_Zork-Start/src/main/java/ch/bbw/zork/`, Tests: `02_Zork-Start/src/test/java/ch/bbw/zork/` (Paket `ch.bbw.zork`).
 - Testklasse heisst wie die Klasse + `Test`, z. B. `RoomTest`. Assertions mit `org.junit.jupiter.api.Assertions.*`.
+- Jede Testmethode hat **JavaDoc und `@DisplayName`** (beides Deutsch, kurz), z. B.:
+  ```java
+  /** Ein gesperrter Ausgang blockiert hasExitTo. */
+  @Test
+  @DisplayName("Gesperrter Ausgang blockiert hasExitTo")
+  void lockedExitBlocksHasExitTo() { ... }
+  ```
 - Zufall **immer** über einen `Random`-Parameter, in Tests `new Random(42)`. Nie `Math.random()`.
 - Tests prüfen nur Fachklassen (nicht `Game`, da alles `private` und Konsole).
 
@@ -405,7 +412,7 @@ Danach gemeinsam: Bewertungsraster (`docs/Bewertung.md`) Punkt für Punkt prüfe
 
 ## Für alle, jeden Block
 - **JavaDoc** (Deutsch) auf jeder eigenen Klasse und öffentlichen Methode (Ziel > 90 %)
-- **5–8 Tests** pro eigener Fachklasse
+- **5–8 Tests** pro eigener Fachklasse, jeder mit JavaDoc und `@DisplayName`
 - Mehrere kleine Commits pro Block, sinnvolle Nachrichten
 - Nie direkt auf `dev` oder `main` pushen, immer über PR
 - Keine Dateien aus `target/` oder `.idea/` committen
