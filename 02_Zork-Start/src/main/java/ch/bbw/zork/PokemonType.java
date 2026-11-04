@@ -18,6 +18,7 @@ public enum PokemonType {
     /** Normal-Typ, nur für den Boss Arceus. Hat keine Stärken und Schwächen. */
     NORMAL("Normal");
 
+    /** Englischer Name des Typs, der im Spiel angezeigt wird (z. B. "Fire"). */
     private final String displayName;
 
     /**
