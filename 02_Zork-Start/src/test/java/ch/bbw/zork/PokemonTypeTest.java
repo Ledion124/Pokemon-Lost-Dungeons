@@ -66,6 +66,7 @@ class PokemonTypeTest {
         assertEquals("Ground", PokemonType.GROUND.getDisplayName());
     }
 
+    /** Die Typ-Tabelle ist symmetrisch: Macht A gegen B doppelten Schaden, macht B gegen A halben. */
     @Test
     @DisplayName("Typ-Tabelle ist symmetrisch")
     void typeTableIsSymmetric() {
@@ -78,6 +79,7 @@ class PokemonTypeTest {
         }
     }
 
+    /** Jeder der fünf normalen Typen ist gegen genau zwei Typen stark und gegen genau zwei schwach. */
     @Test
     @DisplayName("Jeder Typ ist gegen 2 stark und gegen 2 schwach")
     void eachTypeHasTwoStrengthsAndTwoWeaknesses() {
@@ -100,6 +102,7 @@ class PokemonTypeTest {
         }
     }
 
+    /** Normal ist gegen jeden Typ und jeder Typ gegen Normal neutral. */
     @Test
     @DisplayName("Normal ist in beide Richtungen immer neutral")
     void normalIsAlwaysNeutralBothWays() {
