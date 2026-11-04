@@ -39,6 +39,9 @@ public class Room {
 	/** Gegenstände, die offen im Raum liegen, in der Reihenfolge, in der sie hingelegt wurden. */
 	private final List<Item> items = new ArrayList<>();
 
+	/** Stellen, die man in diesem Raum mit search untersuchen kann. */
+	private final List<HidingSpot> hidingSpots = new ArrayList<>();
+
 	/**
 	 * Erstellt einen Raum ohne Ausgänge.
 	 *
@@ -238,6 +241,42 @@ public class Room {
 	 */
 	public List<Item> getItems() {
 		return new ArrayList<>(items);
+	}
+
+	/**
+	 * Fügt eine Stelle hinzu, die man untersuchen kann.
+	 *
+	 * @param hidingSpot die Stelle
+	 */
+	public void addHidingSpot(HidingSpot hidingSpot) {
+		hidingSpots.add(hidingSpot);
+	}
+
+	/**
+	 * Sucht die Stelle mit diesem Befehlswort.
+	 *
+	 * @param name Befehlswort der Stelle (Gross-/Kleinschreibung egal)
+	 * @return die Stelle oder null, wenn es sie hier nicht gibt
+	 */
+	public HidingSpot getHidingSpot(String name) {
+		if (name == null) {
+			return null;
+		}
+		for (HidingSpot hidingSpot : hidingSpots) {
+			if (hidingSpot.getName().equalsIgnoreCase(name)) {
+				return hidingSpot;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Gibt alle Stellen im Raum als Kopie zurück.
+	 *
+	 * @return Kopie der Stellen
+	 */
+	public List<HidingSpot> getHidingSpots() {
+		return new ArrayList<>(hidingSpots);
 	}
 
 	/**
