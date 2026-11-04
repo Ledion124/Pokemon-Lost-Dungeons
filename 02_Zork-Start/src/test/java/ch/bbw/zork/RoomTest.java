@@ -3,6 +3,7 @@ package ch.bbw.zork;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -28,6 +29,7 @@ class RoomTest {
 
 	/** Der Konstruktor speichert Name, Beschreibung und Level, ein neuer Raum ist kein Gewinn-Raum. */
 	@Test
+	@DisplayName("Konstruktor speichert Name, Beschreibung und Level")
 	void constructorSetsNameDescriptionAndLevel() {
 		assertEquals("Hall", hall.getName());
 		assertEquals("A big hall.", hall.getDescription());
@@ -37,6 +39,7 @@ class RoomTest {
 
 	/** null bei setExits wird nicht als Ausgang eingetragen. */
 	@Test
+	@DisplayName("null wird nicht als Ausgang eingetragen")
 	void nullExitIsNoExit() {
 		hall.setExits(north, null, null, null);
 
@@ -47,6 +50,7 @@ class RoomTest {
 
 	/** Ein gesperrter Ausgang blockiert hasExitTo, nextRoom liefert den Raum aber trotzdem. */
 	@Test
+	@DisplayName("Gesperrter Ausgang blockiert hasExitTo, nextRoom liefert Raum trotzdem")
 	void lockedExitBlocksHasExitToButNextRoomStillWorks() {
 		hall.setExits(north, null, null, null);
 		hall.lockExit("north", "Blocked!");
@@ -59,6 +63,7 @@ class RoomTest {
 
 	/** Nach unlockExit ist der Ausgang wieder offen und hat keinen Sperrtext mehr. */
 	@Test
+	@DisplayName("unlockExit öffnet den Ausgang wieder")
 	void unlockExitOpensItAgain() {
 		hall.setExits(north, null, null, null);
 		hall.lockExit("north", "Blocked!");
@@ -71,6 +76,7 @@ class RoomTest {
 
 	/** Ein Ausgang, der nur auf einer Seite eingetragen ist, führt nicht zurück (Einbahnweg). */
 	@Test
+	@DisplayName("Einbahnweg führt nicht zurück")
 	void oneWayExitHasNoWayBack() {
 		hall.setExits(null, null, south, null);
 
@@ -80,6 +86,7 @@ class RoomTest {
 
 	/** exitString listet die Ausgänge in der Reihenfolge north, east, south, west und markiert gesperrte. */
 	@Test
+	@DisplayName("exitString in fester Reihenfolge, gesperrte mit (blocked)")
 	void exitStringHasFixedOrderAndMarksBlockedExits() {
 		hall.setExits(north, east, south, west);
 		hall.lockExit("south", "Blocked!");
@@ -89,6 +96,7 @@ class RoomTest {
 
 	/** longDescription hat das Format aus dem Plan: Name, Beschreibung, dann die Ausgänge. */
 	@Test
+	@DisplayName("longDescription mit Name, Beschreibung und Ausgängen")
 	void longDescriptionHasNameDescriptionAndExits() {
 		hall.setExits(null, east, null, null);
 
@@ -97,6 +105,7 @@ class RoomTest {
 
 	/** setWinRoom(true) macht den Raum zum Gewinn-Raum. */
 	@Test
+	@DisplayName("setWinRoom macht den Raum zum Gewinn-Raum")
 	void winRoomCanBeSet() {
 		hall.setWinRoom(true);
 
