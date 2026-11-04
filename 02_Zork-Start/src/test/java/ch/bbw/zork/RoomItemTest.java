@@ -100,4 +100,56 @@ class RoomItemTest {
 
         assertEquals(1, room.getItems().size());
     }
+
+    // ===================== Verstecke =====================
+
+    /** Ein neuer Raum hat keine Stellen zum Untersuchen. */
+    @Test
+    @DisplayName("Neuer Raum hat keine Verstecke")
+    void newRoomHasNoHidingSpots() {
+        assertTrue(room.getHidingSpots().isEmpty());
+    }
+
+    /** addHidingSpot fügt Stellen in der richtigen Reihenfolge hinzu. */
+    @Test
+    @DisplayName("addHidingSpot fügt Verstecke in Reihenfolge hinzu")
+    void addHidingSpotKeepsOrder() {
+        HidingSpot ash = new HidingSpot("ash", "a pile of ash");
+        HidingSpot stump = new HidingSpot("stump", "an old tree stump");
+        room.addHidingSpot(ash);
+        room.addHidingSpot(stump);
+
+        assertEquals(List.of(ash, stump), room.getHidingSpots());
+    }
+
+    /** getHidingSpot findet eine Stelle ohne Beachtung der Gross-/Kleinschreibung. */
+    @Test
+    @DisplayName("getHidingSpot findet Versteck unabhängig von Gross-/Kleinschreibung")
+    void getHidingSpotIgnoresCase() {
+        HidingSpot ash = new HidingSpot("ash", "a pile of ash");
+        room.addHidingSpot(ash);
+
+        assertSame(ash, room.getHidingSpot("ASH"));
+    }
+
+    /** getHidingSpot gibt null zurück, wenn es die Stelle nicht gibt. */
+    @Test
+    @DisplayName("getHidingSpot gibt null bei unbekanntem Versteck")
+    void getHidingSpotUnknownReturnsNull() {
+        room.addHidingSpot(new HidingSpot("ash", "a pile of ash"));
+
+        assertNull(room.getHidingSpot("crack"));
+        assertNull(room.getHidingSpot(null));
+    }
+
+    /** getHidingSpots gibt eine Kopie zurück, Änderungen daran wirken nicht auf den Raum. */
+    @Test
+    @DisplayName("getHidingSpots gibt eine Kopie zurück")
+    void getHidingSpotsReturnsCopy() {
+        room.addHidingSpot(new HidingSpot("ash", "a pile of ash"));
+
+        room.getHidingSpots().clear();
+
+        assertEquals(1, room.getHidingSpots().size());
+    }
 }
