@@ -281,14 +281,31 @@ public class Room {
 
 	/**
 	 * Lange Beschreibung mit Name, Beschreibung und Ausgängen.
-	 * Weitere Zeilen (Items, Pokémon) werden später hinten angehängt.
+	 * Liegen Gegenstände im Raum, kommt die Zeile {@code Items: flute, key} dazu.
+	 * Weitere Zeilen (Pokémon) werden später hinten angehängt.
 	 *
 	 * @return mehrzeilige Beschreibung des Raums
 	 */
 	public String longDescription() {
 		StringBuilder stringBuilder = new StringBuilder("You are in " + name + ". " + description + "\n");
 		stringBuilder.append(exitString());
+		if (!items.isEmpty()) {
+			stringBuilder.append("\n").append(itemString());
+		}
 		return stringBuilder.toString();
+	}
+
+	/**
+	 * Alle Gegenstände im Raum, durch Komma getrennt.
+	 *
+	 * @return z. B. "Items: flute, key"
+	 */
+	private String itemString() {
+		List<String> names = new ArrayList<>();
+		for (Item item : items) {
+			names.add(item.getName());
+		}
+		return "Items: " + String.join(", ", names);
 	}
 
 	/**
