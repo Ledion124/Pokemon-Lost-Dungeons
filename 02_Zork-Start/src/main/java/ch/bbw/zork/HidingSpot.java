@@ -12,6 +12,9 @@ public class HidingSpot {
     /** Kurze englische Beschreibung (z. B. "a pile of ash"). */
     private final String description;
 
+    /** Der versteckte Gegenstand oder null, wenn die Stelle leer ist. */
+    private Item hiddenItem;
+
     /**
      * Erstellt eine neue, leere Stelle.
      *
@@ -39,5 +42,35 @@ public class HidingSpot {
      */
     public String getDescription() {
         return description;
+    }
+
+    /**
+     * Versteckt einen Gegenstand an dieser Stelle.
+     *
+     * @param item der Gegenstand, der versteckt wird
+     */
+    public void hideItem(Item item) {
+        this.hiddenItem = item;
+    }
+
+    /**
+     * Untersucht die Stelle. Ein versteckter Gegenstand wird herausgenommen,
+     * danach ist die Stelle leer.
+     *
+     * @return der versteckte Gegenstand oder null, wenn nichts (mehr) da ist
+     */
+    public Item search() {
+        Item found = hiddenItem;
+        hiddenItem = null;
+        return found;
+    }
+
+    /**
+     * Prüft, ob an dieser Stelle noch etwas versteckt ist.
+     *
+     * @return true, wenn ein Gegenstand versteckt ist
+     */
+    public boolean hasHiddenItem() {
+        return hiddenItem != null;
     }
 }
