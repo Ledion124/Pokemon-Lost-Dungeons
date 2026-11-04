@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -35,6 +36,7 @@ class PokemonCollectionTest {
      * Nach dem Hinzufügen zählt die Sammlung richtig.
      */
     @Test
+    @DisplayName("add erhöht die Anzahl")
     void addIncreasesSize() {
         collection.add(charmander);
         collection.add(bulbasaur);
@@ -45,6 +47,7 @@ class PokemonCollectionTest {
      * Die Nummerierung beginnt bei 1: Nummer 1 ist das erste hinzugefügte Pokémon.
      */
     @Test
+    @DisplayName("get nutzt Nummern ab 1")
     void getUsesNumbersStartingAtOne() {
         collection.add(charmander);
         collection.add(bulbasaur);
@@ -56,6 +59,7 @@ class PokemonCollectionTest {
      * Ungültige Nummern (0, negativ, zu gross) geben null zurück statt abzustürzen.
      */
     @Test
+    @DisplayName("get mit ungültiger Nummer gibt null")
     void getWithInvalidNumberReturnsNull() {
         collection.add(charmander);
         assertNull(collection.get(0));
@@ -67,6 +71,7 @@ class PokemonCollectionTest {
      * Entfernen gibt das entfernte Pokémon zurück, die übrigen rücken nach vorne.
      */
     @Test
+    @DisplayName("remove gibt das entfernte Pokémon zurück")
     void removeReturnsRemovedPokemon() {
         collection.add(charmander);
         collection.add(bulbasaur);
@@ -79,6 +84,7 @@ class PokemonCollectionTest {
      * Entfernen mit ungültiger Nummer gibt null zurück und ändert nichts.
      */
     @Test
+    @DisplayName("remove mit ungültiger Nummer gibt null")
     void removeWithInvalidNumberReturnsNull() {
         collection.add(charmander);
         assertNull(collection.remove(5));
@@ -89,6 +95,7 @@ class PokemonCollectionTest {
      * getAll gibt eine Kopie zurück: Änderungen daran verändern die Sammlung nicht.
      */
     @Test
+    @DisplayName("getAll gibt eine Kopie zurück")
     void getAllReturnsCopy() {
         collection.add(charmander);
         List<Pokemon> all = collection.getAll();
@@ -100,6 +107,7 @@ class PokemonCollectionTest {
      * healAll heilt alle Pokémon wieder auf volle HP.
      */
     @Test
+    @DisplayName("healAll heilt alle Pokémon")
     void healAllRestoresAllPokemon() {
         collection.add(charmander);
         collection.add(bulbasaur);
@@ -114,6 +122,7 @@ class PokemonCollectionTest {
      * Das Gesamtgewicht ist die Summe der Gewichte im Pokéball (0.85 + 0.69).
      */
     @Test
+    @DisplayName("Gesamtgewicht ist die Summe der Pokéball-Gewichte")
     void totalWeightIsSumOfCarryWeights() {
         collection.add(charmander);
         collection.add(bulbasaur);
@@ -124,6 +133,7 @@ class PokemonCollectionTest {
      * Eine leere Sammlung wiegt nichts.
      */
     @Test
+    @DisplayName("Leere Sammlung wiegt 0 kg")
     void emptyCollectionHasZeroWeight() {
         assertEquals(0.0, collection.getTotalWeight(), 0.001);
     }

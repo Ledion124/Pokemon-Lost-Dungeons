@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 import java.util.Random;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -16,6 +17,7 @@ class PokedexTest {
      * Der Katalog enthält genau 20 Pokémon, ohne Arceus und Snorlax.
      */
     @Test
+    @DisplayName("Katalog hat genau 20 Pokémon, ohne Arceus und Snorlax")
     void catalogHasTwentyPokemon() {
         List<String> names = Pokedex.getAllNames();
         assertEquals(20, names.size());
@@ -27,6 +29,7 @@ class PokedexTest {
      * create erstellt das gewünschte Pokémon mit den Werten aus der Tabelle.
      */
     @Test
+    @DisplayName("create erstellt Charmander mit den Werten aus der Tabelle")
     void createReturnsPokemonWithCorrectValues() {
         Pokemon charmander = Pokedex.create("Charmander", 5);
         assertEquals("Charmander", charmander.getName());
@@ -41,6 +44,7 @@ class PokedexTest {
      * Ein unbekannter Name gibt null zurück.
      */
     @Test
+    @DisplayName("create mit unbekanntem Namen gibt null")
     void createWithUnknownNameReturnsNull() {
         assertNull(Pokedex.create("Pikachu", 5));
     }
@@ -49,6 +53,7 @@ class PokedexTest {
      * Jeder Name aus dem Katalog kann erstellt werden und hat den richtigen Namen.
      */
     @Test
+    @DisplayName("Jedes Pokémon im Katalog kann erstellt werden")
     void everyNameCanBeCreated() {
         for (String name : Pokedex.getAllNames()) {
             Pokemon pokemon = Pokedex.create(name, 1);
@@ -61,6 +66,7 @@ class PokedexTest {
      * Jeder Typ ausser Normal kommt genau 4-mal vor.
      */
     @Test
+    @DisplayName("Jeder Typ hat genau 4 Pokémon, Normal keines")
     void eachTypeHasFourPokemon() {
         int[] counts = new int[PokemonType.values().length];
         for (String name : Pokedex.getAllNames()) {
@@ -78,6 +84,7 @@ class PokedexTest {
      * createRandom erstellt ein Pokémon aus dem Katalog mit dem gewünschten Level und vollen HP.
      */
     @Test
+    @DisplayName("createRandom gibt ein Katalog-Pokémon mit richtigem Level")
     void createRandomReturnsCatalogPokemonWithLevel() {
         Pokemon pokemon = Pokedex.createRandom(7, new Random(42));
         assertTrue(Pokedex.getAllNames().contains(pokemon.getName()));
@@ -89,6 +96,7 @@ class PokedexTest {
      * Mit gleichem Startwert liefert createRandom das gleiche Pokémon.
      */
     @Test
+    @DisplayName("createRandom mit gleichem Startwert gibt gleiches Pokémon")
     void createRandomWithSameSeedGivesSamePokemon() {
         Pokemon first = Pokedex.createRandom(3, new Random(123));
         Pokemon second = Pokedex.createRandom(3, new Random(123));
@@ -99,6 +107,7 @@ class PokedexTest {
      * Jeder Aufruf erstellt ein neues Objekt, Schaden an einem betrifft das andere nicht.
      */
     @Test
+    @DisplayName("create erstellt jedes Mal ein neues Objekt")
     void createReturnsNewObjectEachTime() {
         Pokemon first = Pokedex.create("Geodude", 5);
         Pokemon second = Pokedex.create("Geodude", 5);
@@ -111,6 +120,7 @@ class PokedexTest {
      * getAllNames gibt eine Kopie zurück: Änderungen daran verändern den Katalog nicht.
      */
     @Test
+    @DisplayName("getAllNames gibt eine Kopie zurück")
     void getAllNamesReturnsCopy() {
         Pokedex.getAllNames().clear();
         assertEquals(20, Pokedex.getAllNames().size());
