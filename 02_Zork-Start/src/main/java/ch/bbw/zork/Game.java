@@ -11,8 +11,13 @@ import java.util.Random;
 
 public class Game {
 
+	/** Liest die Befehle des Spielers. */
 	private Parser parser;
+
+	/** Die Spielwelt mit allen Räumen. */
 	private WorldBuilder world;
+
+	/** Raum, in dem der Spieler gerade steht. */
 	private Room currentRoom;
 
 	/**
@@ -77,6 +82,9 @@ public class Game {
 			case "look":
 				look();
 				break;
+			case "search":
+				search(command);
+				break;
 			case "take":
 				takeItem(command);
 				break;
@@ -86,8 +94,23 @@ public class Game {
 			case "inventory":
 				showInventory();
 				break;
+			case "use":
+				useItem(command);
+				break;
 			case "map":
 				showMap();
+				break;
+			case "fight":
+				fight();
+				break;
+			case "scare":
+				scare();
+				break;
+			case "team":
+				showTeam();
+				break;
+			case "release":
+				release(command);
 				break;
 			case "quit":
 				if (command.hasSecondWord()) {
@@ -145,47 +168,130 @@ public class Game {
 		System.out.println("'back' ist noch nicht implementiert.");
 	}
 
+	// ===================== Engel (Block 3) =====================
+
 	/**
-	 * Zeigt den aktuellen Raum mit allen Gegenständen an.
-	 * TODO (Sakaj): Gegenstände im Raum ausgeben.
+	 * Benutzt einen Gegenstand aus dem Inventar, z. B. die Flöte oder den Schlüssel.
+	 * TODO (Engel, Block 3): KeyItem im richtigen Raum öffnet den Ausgang.
+	 *
+	 * @param command Befehl mit dem Namen des Gegenstands als zweitem Wort
+	 */
+	private void useItem(Command command) {
+		System.out.println("'use' is not implemented yet.");
+	}
+
+	/**
+	 * Zeigt alle Räume mit Items und gesperrten Ausgängen, der aktuelle Raum ist markiert.
+	 * TODO (Engel, Block 3): über world.getRooms() umsetzen.
+	 */
+	private void showMap() {
+		System.out.println("'map' is not implemented yet.");
+	}
+
+	/**
+	 * Lässt den Spieler zu Beginn ein Starter-Pokémon wählen.
+	 * TODO (Engel, Block 3): Auswahl über parser.readLine(), Pokémon über Pokedex.create.
+	 */
+	private void chooseStarter() {
+	}
+
+	// ===================== Castelberg (Block 3) =====================
+
+	/**
+	 * Zeigt den aktuellen Raum mit Items, Verstecken und wildem Pokémon an.
+	 * TODO (Castelberg, Block 3): longDescription des aktuellen Raums ausgeben.
 	 */
 	private void look() {
 		System.out.println(currentRoom.longDescription());
 	}
 
 	/**
+	 * Untersucht ein Versteck im aktuellen Raum.
+	 * TODO (Castelberg, Block 3): verstecktes Item in den Raum legen.
+	 *
+	 * @param command Befehl mit dem Namen des Verstecks als zweitem Wort
+	 */
+	private void search(Command command) {
+		System.out.println("'search' is not implemented yet.");
+	}
+
+	/**
 	 * Nimmt einen Gegenstand aus dem Raum ins Inventar.
-	 * TODO (Castelberg): mit Gewichtsprüfung umsetzen.
+	 * TODO (Castelberg, Block 3): mit Gewichtsprüfung über player.canCarry umsetzen.
 	 *
 	 * @param command Befehl mit dem Namen des Gegenstands als zweitem Wort
 	 */
 	private void takeItem(Command command) {
-		System.out.println("'take' ist noch nicht implementiert.");
+		System.out.println("'take' is not implemented yet.");
 	}
 
 	/**
 	 * Legt einen Gegenstand aus dem Inventar in den Raum.
-	 * TODO (Castelberg): umsetzen.
+	 * TODO (Castelberg, Block 3): umsetzen.
 	 *
 	 * @param command Befehl mit dem Namen des Gegenstands als zweitem Wort
 	 */
 	private void dropItem(Command command) {
-		System.out.println("'drop' ist noch nicht implementiert.");
+		System.out.println("'drop' is not implemented yet.");
 	}
 
 	/**
 	 * Zeigt alle getragenen Gegenstände und das Gesamtgewicht an.
-	 * TODO (Castelberg): umsetzen.
+	 * TODO (Castelberg, Block 3): umsetzen.
 	 */
 	private void showInventory() {
-		System.out.println("'inventory' ist noch nicht implementiert.");
+		System.out.println("'inventory' is not implemented yet.");
+	}
+
+	// ================== Sakaj (Block 3) ===================
+
+	/**
+	 * Setzt zu Spielbeginn in jeden Spawn-Raum ein wildes Pokémon.
+	 * TODO (Sakaj, Block 3): Pokedex.createRandom pro Raum mit isSpawnRoom().
+	 */
+	private void spawnAll() {
 	}
 
 	/**
-	 * Zeigt alle Räume mit ihren Gegenständen an, der aktuelle Raum ist markiert.
-	 * TODO (Engel): über ArrayList&lt;Room&gt; umsetzen.
+	 * Wird nach jedem Betreten eines Raums aufgerufen (Pokémon nachspawnen, Boss setzen).
+	 * TODO (Sakaj, Block 3): umsetzen.
+	 *
+	 * @param room der Raum, der gerade betreten wurde
 	 */
-	private void showMap() {
-		System.out.println("'map' ist noch nicht implementiert.");
+	private void onEnterRoom(Room room) {
+	}
+
+	/**
+	 * Kämpft gegen das wilde Pokémon im aktuellen Raum.
+	 * TODO (Sakaj, Block 3): Team wählen, Battle ausführen, fangen oder Neustart.
+	 */
+	private void fight() {
+		System.out.println("'fight' is not implemented yet.");
+	}
+
+	/**
+	 * Verscheucht das wilde Pokémon im aktuellen Raum.
+	 * TODO (Sakaj, Block 3): Boss lässt sich nicht verscheuchen.
+	 */
+	private void scare() {
+		System.out.println("'scare' is not implemented yet.");
+	}
+
+	/**
+	 * Zeigt alle Pokémon des Spielers nummeriert an.
+	 * TODO (Sakaj, Block 3): umsetzen.
+	 */
+	private void showTeam() {
+		System.out.println("'team' is not implemented yet.");
+	}
+
+	/**
+	 * Lässt ein Pokémon frei.
+	 * TODO (Sakaj, Block 3): Nummer prüfen, letztes Pokémon nicht freilassen.
+	 *
+	 * @param command Befehl mit der Nummer des Pokémon als zweitem Wort
+	 */
+	private void release(Command command) {
+		System.out.println("'release' is not implemented yet.");
 	}
 }
