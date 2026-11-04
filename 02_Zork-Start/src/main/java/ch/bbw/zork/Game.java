@@ -14,26 +14,53 @@ public class Game {
 	/** Liest die Befehle des Spielers. */
 	private Parser parser;
 
-	/** Die Spielwelt mit allen Räumen. */
+	/** Zufallsgenerator für die ganze Spielwelt (Pokémon, Flöten-Versteck). */
+	private Random random;
+
+	/** Die Spielwelt mit allen Räumen, wird bei jedem (Neu-)Start neu gebaut. */
 	private WorldBuilder world;
 
-	/** Raum, in dem der Spieler gerade steht. */
-	private Room currentRoom;
+	/** Der Spieler mit aktuellem Raum, Inventar und Pokémon. */
+	private Player player;
 
 	/**
-	 * Erstellt das Spiel: baut die Welt über den {@link WorldBuilder} und setzt den Startraum.
+	 * Erstellt das Spiel. Die Welt und der Spieler werden erst in
+	 * {@link #initGame()} angelegt, damit ein Neustart dasselbe tun kann.
 	 */
 	public Game() {
 		parser = new Parser(System.in);
-		world = new WorldBuilder(new Random());
-		currentRoom = world.getStartRoom();
+		random = new Random();
 	}
 
 	/**
-	 *  Main play routine.  Loops until end of play.
+	 * Baut eine neue Welt, setzt einen neuen Spieler in den Startraum,
+	 * lässt die Pokémon spawnen und den Starter wählen.
+	 */
+	private void initGame() {
+		world = new WorldBuilder(random);
+		player = new Player(world.getStartRoom());
+		spawnAll();
+		chooseStarter();
+	}
+
+	/**
+	 * Startet das Spiel nach einer Niederlage neu: gibt den Niederlage-Text aus,
+	 * baut alles neu auf und zeigt den Startraum.
+	 */
+	private void restartGame() {
+		System.out.println("All your Pokémon have fainted. Everything goes dark... The game starts over.");
+		initGame();
+		System.out.println(player.getCurrentRoom().longDescription());
+	}
+
+	/**
+	 * Hauptschleife: Begrüssung, Spiel aufbauen, Startraum zeigen und dann
+	 * Befehle ausführen, bis das Spiel endet.
 	 */
 	public void play() {
 		printWelcome();
+		initGame();
+		System.out.println(player.getCurrentRoom().longDescription());
 
 		// Enter the main command loop.  Here we repeatedly read commands and
 		// execute them until the game is over.
@@ -46,7 +73,7 @@ public class Game {
 	}
 
 	/**
-	 * Gibt die Begrüssung und die Beschreibung des Startraums aus.
+	 * Gibt die Begrüssung mit der Story aus (ohne Raumbeschreibung).
 	 */
 	private void printWelcome() {
 		System.out.println();
@@ -54,7 +81,6 @@ public class Game {
 		System.out.println("Finde den Weg zurück ans Tageslicht.");
 		System.out.println("Tippe 'help', wenn du Hilfe brauchst.");
 		System.out.println();
-		System.out.println(currentRoom.longDescription());
 	}
 
 	/**
@@ -149,13 +175,13 @@ public class Game {
 			String direction = command.getSecondWord();
 
 			// Try to leave current room.
-			Room nextRoom = currentRoom.nextRoom(direction);
+			Room nextRoom = player.getCurrentRoom().nextRoom(direction);
 
 			if (nextRoom == null)
 				System.out.println("There is no door!");
 			else {
-				currentRoom = nextRoom;
-				System.out.println(currentRoom.longDescription());
+				player.moveTo(nextRoom);
+				System.out.println(nextRoom.longDescription());
 			}
 		}
 	}
@@ -202,7 +228,7 @@ public class Game {
 	 * TODO (Castelberg, Block 3): longDescription des aktuellen Raums ausgeben.
 	 */
 	private void look() {
-		System.out.println(currentRoom.longDescription());
+		System.out.println(player.getCurrentRoom().longDescription());
 	}
 
 	/**
