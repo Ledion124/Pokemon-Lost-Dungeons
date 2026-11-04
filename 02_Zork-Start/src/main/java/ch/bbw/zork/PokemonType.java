@@ -56,6 +56,15 @@ public enum PokemonType {
         return 1.0;
     }
 
+    /**
+     * Prüft, ob dieser Typ den anderen Typ schlägt (Tabelle in docs/Idee.md).
+     * Die Tabelle ist symmetrisch: Schlägt A den Typ B, verliert B gegen A.
+     * Darum reicht diese eine Methode für Vorteil und Nachteil.
+     * {@link #NORMAL} schlägt keinen Typ und wird von keinem geschlagen.
+     *
+     * @param other der andere Typ
+     * @return true, wenn dieser Typ gegen den anderen doppelten Schaden macht
+     */
     private boolean beats(PokemonType other) {
         return switch (this) {
             case FIRE -> other == GRASS || other == ICE;
