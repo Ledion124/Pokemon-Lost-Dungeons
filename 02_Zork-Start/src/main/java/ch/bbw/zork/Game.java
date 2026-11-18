@@ -1,1 +1,205 @@
-package ch.bbw.zork;import java.util.ArrayList;import java.util.Arrays;import java.util.HashSet;import java.util.Stack;/** * Class Game - the main class of the "Zork" game. * * Author:  Michael Kolling, 1.1, March 2000 * refactoring: Rinaldo Lanza, September 2020 */public class Game {	private Parser parser;	private Room currentRoom;	private Room ashfallValley;    private Room forgottenCrossroads;    private Room fogCanyon;    private Room whitePalace;    private Room theAbyss;    private Room royalWaterways;    private Room ancientTreasures;    private Room greenpath;    private Room restingGrounds;    private Room kingsPass;    private Room queensGarden;    private Room exit;	public Game() {		parser = new Parser(System.in);		// create rooms		ashfallValley = new Room("Ein Tal voller grauer Asche. Von hier führen Wege in alle Teile der Welt.");        	cityOfTears = new Room("Eine verlassene Stadt, in der es ohne Pause regnet.");		forgottenCrossroads = new Room("Alte, vergessene Wegkreuzungen. Ein steiler Abhang führt nach Süden in den Nebel.");		fogCanyon = new Room("Eine Schlucht voller dichtem Nebel. Man sieht kaum die eigene Hand.");		whitePalace = new Room("Ein strahlend weisser Palast. Im Norden liegt das Tor nach draussen.");		theAbyss = new Room("Ein dunkler Abgrund unter dem Palast. Hier ist es still und kalt.");		royalWaterways = new Room("Unterirdische Kanäle mit trübem Wasser.");		ancientTreasures = new Room("Eine Schatzkammer mit uralten Truhen und Münzen.");		greenpath = new Room("Ein grüner Pfad durch Moos und Farn.");		restingGrounds = new Room("Ein ruhiger Friedhof, auf dem man sich ausruhen kann.");		kingsPass = new Room("the computing admin office");		queensGarden = new Room("Ein verwilderter Garten voller Dornen und Blumen.");		exit = new Room("Der Ausgang. Wer hier ankommt, hat das Spiel gewonnen.");		// initialise room exits		ashfallValley.setExits(cityOfTears, ancientTreasures, royalWaterways, null);		cityOfTears.setExits(null, null, ashfallValley, forgottenCrossroads);		forgottenCrossroads.setExits(null, cityOfTears, fogCanyon, null);		fogCanyon.setExits(forgottenCrossroads, ashfallValley, null, whitePalace);		whitePalace.setExits(exit, fogCanyon, theAbyss, null);		theAbyss.setExits(whitePalace, null, null, null);		exit.setExits(null, null, null, null);		royalWaterways.setExits(ashfallValley, greenpath, null, null);		greenpath.setExits(null, restingGrounds, null, royalWaterways);		restingGrounds.setExits(greenpath, kingsPass, null, null);		kingsPass.setExits(queensGarden, null, restingGrounds, ancientTreasures);		queensGarden.setExits(null, null, kingsPass, null);		ancientTreasures.setExits(null, null, null, ashfallValley);		currentRoom = ashfallValley; // start game outside	}	/**	 *  Main play routine.  Loops until end of play.	 */	public void play() {		printWelcome();		// Enter the main command loop.  Here we repeatedly read commands and		// execute them until the game is over.		boolean finished = false;		while (!finished) {			Command command = parser.getCommand();			finished = processCommand(command);		}		System.out.println("Thank you for playing.  Good bye.");	}	private void printWelcome() {		System.out.println();		System.out.println("Welcome to Zork!");		System.out.println("Zork is a simple adventure game.");		System.out.println("Type 'help' if you need help.");		System.out.println();		System.out.println(currentRoom.longDescription());	}	private boolean processCommand(Command command) {		if (command.isUnknown()) {			System.out.println("I don't know what you mean...");			return false;		}		String commandWord = command.getCommandWord();		if (commandWord.equals("help")) {			printHelp();		} else if (commandWord.equals("go")) {			goRoom(command);		} else if (commandWord.equals("quit")) {			if (command.hasSecondWord()) {				System.out.println("Quit what?");			} else {				return true; // signal that we want to quit			}		}		return false;	}	private void printHelp() {		System.out.println("You are lost. You are alone. You wander");		System.out.println("around at Monash Uni, Peninsula Campus.");		System.out.println();		System.out.println("Your command words are:");		System.out.println(parser.showCommands());	}	private void goRoom(Command command) {		if (!command.hasSecondWord()) {			System.out.println("Go where?");		} else {			String direction = command.getSecondWord();			// Try to leave current room.			Room nextRoom = currentRoom.nextRoom(direction);			if (nextRoom == null)				System.out.println("There is no door!");			else {				currentRoom = nextRoom;				System.out.println(currentRoom.longDescription());			}			if(currentRoom == lab){				System.out.println("Das Fenster ist offen, Brrr");			}		}	}}
+package ch.bbw.zork;
+
+import java.util.Random;
+
+/**
+ * Hauptklasse des Spiels: baut Welt und Spieler auf, liest Befehle und gibt
+ * sie weiter. Gehen ({@code go}, {@code back}), Hilfe, Gewinnen und Neustart
+ * erledigt {@code Game} selbst; alle anderen Befehle übernehmen
+ * {@link WorldActions}, {@link ItemActions} und {@link PokemonActions}.
+ *
+ * Author:  Michael Kolling, 1.1, March 2000
+ * refactoring: Rinaldo Lanza, September 2020
+ */
+public class Game {
+
+	/** Liest die Befehle des Spielers. */
+	private Parser parser;
+
+	/** Zufallsgenerator für die ganze Spielwelt (Pokémon, Flöten-Versteck). */
+	private Random random;
+
+	/** Die Spielwelt mit allen Räumen, wird bei jedem (Neu-)Start neu gebaut. */
+	private WorldBuilder world;
+
+	/** Der Spieler mit aktuellem Raum, Inventar und Pokémon. */
+	private Player player;
+
+	/** Befehle use, map und die Starter-Auswahl. */
+	private WorldActions worldActions;
+
+	/** Befehle look, search, take, drop und inventory. */
+	private ItemActions itemActions;
+
+	/** Befehle fight, scare, team, release und das Spawnen der Pokémon. */
+	private PokemonActions pokemonActions;
+
+	/**
+	 * Erstellt das Spiel. Die Welt und der Spieler werden erst in
+	 * {@link #initGame()} angelegt, damit ein Neustart dasselbe tun kann.
+	 */
+	public Game() {
+		parser = new Parser(System.in);
+		random = new Random();
+	}
+
+	/**
+	 * Baut eine neue Welt, setzt einen neuen Spieler in den Startraum,
+	 * erstellt die Befehls-Klassen, lässt die Pokémon spawnen und den Starter wählen.
+	 */
+	private void initGame() {
+		world = new WorldBuilder(random);
+		player = new Player(world.getStartRoom());
+		worldActions = new WorldActions(parser, world, player);
+		itemActions = new ItemActions(player);
+		pokemonActions = new PokemonActions(parser, world, player, random);
+		pokemonActions.spawnAll();
+		worldActions.chooseStarter();
+	}
+
+	/**
+	 * Startet das Spiel nach einer Niederlage neu: gibt den Niederlage-Text aus,
+	 * baut alles neu auf und zeigt den Startraum.
+	 */
+	private void restartGame() {
+		System.out.println("All your Pokémon have fainted. Everything goes dark... The game starts over.");
+		initGame();
+		System.out.println(player.getCurrentRoom().longDescription());
+	}
+
+	/**
+	 * Hauptschleife: Begrüssung, Spiel aufbauen, Startraum zeigen und dann
+	 * Befehle ausführen, bis das Spiel endet.
+	 */
+	public void play() {
+		printWelcome();
+		initGame();
+		System.out.println(player.getCurrentRoom().longDescription());
+
+		boolean finished = false;
+		while (!finished) {
+			Command command = parser.getCommand();
+			finished = processCommand(command);
+		}
+		System.out.println("Thanks for playing. Goodbye!");
+	}
+
+	/**
+	 * Gibt die Begrüssung mit der Story aus (ohne Raumbeschreibung).
+	 */
+	private void printWelcome() {
+		System.out.println();
+		System.out.println("Willkommen bei Pokémon Lost Dungeons!");
+		System.out.println("Finde den Weg zurück ans Tageslicht.");
+		System.out.println("Tippe 'help', wenn du Hilfe brauchst.");
+		System.out.println();
+	}
+
+	/**
+	 * Führt einen Befehl aus, indem er an die zuständige Methode oder Klasse
+	 * weitergegeben wird.
+	 *
+	 * @param command der eingegebene Befehl
+	 * @return true, wenn das Spiel beendet werden soll (gewonnen oder quit)
+	 */
+	private boolean processCommand(Command command) {
+		if (command.isUnknown()) {
+			System.out.println("I don't understand that.");
+			return false;
+		}
+
+		switch (command.getCommandWord()) {
+			case "help" -> printHelp();
+			case "go" -> {
+				return goRoom(command);
+			}
+			case "back" -> goBack();
+			case "look" -> itemActions.look();
+			case "search" -> itemActions.search(command);
+			case "take" -> itemActions.takeItem(command);
+			case "drop" -> itemActions.dropItem(command);
+			case "inventory" -> itemActions.showInventory();
+			case "use" -> worldActions.useItem(command);
+			case "map" -> worldActions.showMap();
+			case "fight" -> {
+				if (pokemonActions.fight()) {
+					restartGame();
+				}
+			}
+			case "scare" -> pokemonActions.scare();
+			case "team" -> pokemonActions.showTeam();
+			case "release" -> pokemonActions.release(command);
+			case "quit" -> {
+				if (!command.hasSecondWord()) {
+					return true;
+				}
+				System.out.println("Quit what?");
+			}
+			default -> { }
+		}
+		return false;
+	}
+
+	/**
+	 * Gibt einen Hilfetext und alle gültigen Befehle aus.
+	 */
+	private void printHelp() {
+		System.out.println("Du bist in den Lost Dungeons gefangen.");
+		System.out.println("Finde den Kristallschlüssel und entkomme ans Tageslicht.");
+		System.out.println();
+		System.out.println("Deine Befehle sind:");
+		System.out.println(parser.showCommands());
+	}
+
+	/**
+	 * Geht in die angegebene Richtung. Gibt es dort keinen Ausgang oder ist er
+	 * gesperrt, bleibt der Spieler stehen und bekommt eine Meldung. Wer den
+	 * Gewinnraum betritt, hat gewonnen.
+	 *
+	 * @param command Befehl mit der Richtung als zweitem Wort
+	 * @return true, wenn der Spieler gewonnen hat und das Spiel endet
+	 */
+	private boolean goRoom(Command command) {
+		if (!command.hasSecondWord()) {
+			System.out.println("Go where?");
+			return false;
+		}
+
+		String direction = command.getSecondWord();
+		Room currentRoom = player.getCurrentRoom();
+		Room nextRoom = currentRoom.nextRoom(direction);
+
+		if (nextRoom == null) {
+			System.out.println("There is no way in that direction.");
+			return false;
+		}
+		if (currentRoom.isLocked(direction)) {
+			System.out.println(currentRoom.getLockMessage(direction));
+			return false;
+		}
+
+		player.moveTo(nextRoom);
+		System.out.println(nextRoom.longDescription());
+		pokemonActions.onEnterRoom(nextRoom);
+
+		if (nextRoom.isWinRoom()) {
+			System.out.println("You climb out into the daylight. You escaped the Lost Dungeons! You win!");
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Geht zurück in den Raum, aus dem man gekommen ist. Über Einbahnwege und
+	 * gesperrte Ausgänge geht das nicht (prüft {@link Player#canGoBack()}).
+	 */
+	private void goBack() {
+		Room room = player.goBack();
+		if (room == null) {
+			System.out.println("The way back is blocked.");
+			return;
+		}
+		System.out.println(room.longDescription());
+		pokemonActions.onEnterRoom(room);
+	}
+}
