@@ -15,6 +15,12 @@ public class WorldActions {
 	/** Alle Richtungen in der Reihenfolge, in der die Karte gesperrte Ausgänge zeigt. */
 	private static final String[] DIRECTIONS = {"north", "east", "south", "west"};
 
+	/** Die drei Starter in der Reihenfolge der Auswahl (Nummer 1 bis 3). */
+	private static final String[] STARTERS = {"Cubchoo", "Charmander", "Bulbasaur"};
+
+	/** Level, mit dem der Starter ins Spiel kommt. */
+	private static final int STARTER_LEVEL = 5;
+
 	/** Liest Eingaben, z. B. für die Starter-Auswahl. */
 	private final Parser parser;
 
@@ -142,9 +148,40 @@ public class WorldActions {
 	}
 
 	/**
-	 * Lässt den Spieler zu Beginn ein Starter-Pokémon wählen.
-	 * TODO (Engel, Block 3): Auswahl über parser.readLine(), Pokémon über Pokedex.create.
+	 * Lässt den Spieler zu Beginn ein Starter-Pokémon wählen. Bei ungültiger
+	 * Eingabe wird nochmals gefragt, bei leerer Eingabe (Ende der Eingabe)
+	 * gibt es Nummer 1. Der Starter kommt mit Level {@value #STARTER_LEVEL} ins Team.
 	 */
 	public void chooseStarter() {
+		System.out.println("Choose your starter Pokémon:");
+		System.out.println("1) Cubchoo (Ice)  2) Charmander (Fire)  3) Bulbasaur (Grass)");
+
+		int choice = readStarterChoice();
+		while (choice == 0) {
+			System.out.println("Please enter 1, 2 or 3.");
+			choice = readStarterChoice();
+		}
+
+		Pokemon starter = Pokedex.create(STARTERS[choice - 1], STARTER_LEVEL);
+		player.getPokemons().add(starter);
+		System.out.println("You chose " + starter.getName() + "! Good luck in the Lost Dungeons.");
+	}
+
+	/**
+	 * Liest eine Zeile und wandelt sie in die Nummer eines Starters um.
+	 *
+	 * @return 1 bis 3, bei leerer Eingabe 1, bei ungültiger Eingabe 0
+	 */
+	private int readStarterChoice() {
+		String line = parser.readLine();
+		if (line.isEmpty()) {
+			return 1;
+		}
+		try {
+			int number = Integer.parseInt(line);
+			return number >= 1 && number <= STARTERS.length ? number : 0;
+		} catch (NumberFormatException e) {
+			return 0;
+		}
 	}
 }
