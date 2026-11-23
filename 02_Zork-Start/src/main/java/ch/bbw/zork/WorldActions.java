@@ -33,12 +33,49 @@ public class WorldActions {
 
 	/**
 	 * Benutzt einen Gegenstand aus dem Inventar, z. B. die Flöte oder den Schlüssel.
-	 * TODO (Engel, Block 3): KeyItem im richtigen Raum öffnet den Ausgang.
+	 * Ein {@link KeyItem} öffnet im passenden Raum seinen Ausgang und wird dabei
+	 * aus dem Inventar entfernt. In jedem anderen Raum passiert nichts.
 	 *
 	 * @param command Befehl mit dem Namen des Gegenstands als zweitem Wort
 	 */
 	public void useItem(Command command) {
-		System.out.println("'use' is not implemented yet.");
+		if (!command.hasSecondWord()) {
+			System.out.println("Use what?");
+			return;
+		}
+
+		Item item = player.getInventory().get(command.getSecondWord());
+		if (item == null) {
+			System.out.println("You don't have that.");
+			return;
+		}
+		if (!(item instanceof KeyItem keyItem)) {
+			System.out.println("You can't use that here.");
+			return;
+		}
+
+		Room room = player.getCurrentRoom();
+		if (!room.getName().equals(keyItem.getTargetRoom())) {
+			System.out.println("Nothing happens here.");
+			return;
+		}
+
+		room.unlockExit(keyItem.getDirection());
+		player.getInventory().remove(keyItem.getName());
+		System.out.println(unlockMessage(keyItem));
+	}
+
+	/**
+	 * Text, der erscheint, wenn ein {@link KeyItem} seinen Ausgang öffnet.
+	 *
+	 * @param keyItem das benutzte Item
+	 * @return passender Text für Flöte oder Schlüssel
+	 */
+	private String unlockMessage(KeyItem keyItem) {
+		if (keyItem.getName().equalsIgnoreCase("flute")) {
+			return "You play the flute. The Snorlax wakes up, yawns and walks away. The way east is free.";
+		}
+		return "The key turns in the lock. The heavy door swings open. The way down is free.";
 	}
 
 	/**
