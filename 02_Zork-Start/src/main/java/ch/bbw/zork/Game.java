@@ -89,9 +89,12 @@ public class Game {
 	 */
 	private void printWelcome() {
 		System.out.println();
-		System.out.println("Willkommen bei Pokémon Lost Dungeons!");
-		System.out.println("Finde den Weg zurück ans Tageslicht.");
-		System.out.println("Tippe 'help', wenn du Hilfe brauchst.");
+		System.out.println("Welcome to Pokémon Lost Dungeons!");
+		System.out.println("You wake up deep inside a cave system. The only way out, north of the");
+		System.out.println("White Palace, is buried under rubble. Find the magic flute, wake the");
+		System.out.println("sleeping Snorlax, get the key and defeat the guardian of The Abyss.");
+		System.out.println("Only then can you climb back into the daylight.");
+		System.out.println("Type 'help' if you need help.");
 		System.out.println();
 	}
 
@@ -141,14 +144,27 @@ public class Game {
 	}
 
 	/**
-	 * Gibt einen Hilfetext und alle gültigen Befehle aus.
+	 * Gibt das Ziel des Spiels und alle Befehle mit einer kurzen Erklärung aus.
 	 */
 	private void printHelp() {
-		System.out.println("Du bist in den Lost Dungeons gefangen.");
-		System.out.println("Finde den Kristallschlüssel und entkomme ans Tageslicht.");
+		System.out.println("You are trapped in the Lost Dungeons. Clear the buried exit and escape!");
 		System.out.println();
-		System.out.println("Deine Befehle sind:");
-		System.out.println(parser.showCommands());
+		System.out.println("Your commands are:");
+		System.out.println("  go <direction>    walk north, east, south or west");
+		System.out.println("  back              go back to the room you came from");
+		System.out.println("  look              describe the room again");
+		System.out.println("  search <place>    search a place in the room for hidden items");
+		System.out.println("  take <item>       pick up an item (max. 20 kg in total)");
+		System.out.println("  drop <item>       put an item down");
+		System.out.println("  inventory         show your items and their weight");
+		System.out.println("  use <item>        use an item, e.g. the flute or the key");
+		System.out.println("  map               show all rooms, items and blocked ways");
+		System.out.println("  fight             fight the wild Pokémon in this room");
+		System.out.println("  scare             scare the wild Pokémon away");
+		System.out.println("  team              show your Pokémon");
+		System.out.println("  release <number>  let one of your Pokémon go");
+		System.out.println("  help              show this help");
+		System.out.println("  quit              end the game");
 	}
 
 	/**
