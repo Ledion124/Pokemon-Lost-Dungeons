@@ -5,13 +5,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Tests für {@link WorldActions}: Benutzen von Gegenständen mit {@code use}.
- * Geprüft wird der Zustand danach (Ausgang offen, Item weg), nicht die Ausgabe.
+ * Tests für {@link WorldActions}: Benutzen von Gegenständen mit {@code use},
+ * die Karte und die Starter-Auswahl. Geprüft wird der Zustand danach
+ * (Ausgang offen, Item weg, Pokémon im Team) bzw. die Zeilen der Karte.
  */
 class WorldActionsTest {
 
@@ -39,8 +41,36 @@ class WorldActionsTest {
 	 * @return die Welt-Befehle
 	 */
 	private WorldActions actionsFor(Player player) {
-		Parser parser = new Parser(new ByteArrayInputStream(new byte[0]));
+		return actionsFor(player, "");
+	}
+
+	/**
+	 * Erstellt die Welt-Befehle für einen Spieler mit vorgegebenen Eingaben.
+	 *
+	 * @param player der Spieler
+	 * @param input  alle Eingabezeilen, getrennt mit {@code \n}
+	 * @return die Welt-Befehle
+	 */
+	private WorldActions actionsFor(Player player, String input) {
+		Parser parser = new Parser(new ByteArrayInputStream(input.getBytes()));
 		return new WorldActions(parser, world, player);
+	}
+
+	/**
+	 * Sucht die Zeile der Karte, die zu einem Raum gehört.
+	 *
+	 * @param lines    alle Zeilen der Karte
+	 * @param roomName Name des Raums
+	 * @return die passende Zeile
+	 */
+	private String lineFor(List<String> lines, String roomName) {
+		for (String line : lines) {
+			if (line.substring(2).startsWith(roomName + " ")) {
+				return line;
+			}
+		}
+		fail("Keine Zeile für " + roomName);
+		return null;
 	}
 
 	/** Die Flöte in Greenpath öffnet den Ausgang east. */
@@ -128,5 +158,92 @@ class WorldActionsTest {
 
 		assertTrue(greenpath.isLocked("east"));
 		assertNotNull(player.getInventory().get("flute"));
+	}
+
+	/** Die Karte hat für jeden der 13 Räume genau eine Zeile. */
+	@Test
+	@DisplayName("Karte hat eine Zeile pro Raum")
+	void mapHasOneLinePerRoom() {
+		Player player = new Player(world.getStartRoom());
+
+		List<String> lines = actionsFor(player).mapLines();
+
+		assertEquals(world.getRooms().size(), lines.size());
+		assertEquals(13, lines.size());
+	}
+
+	/** Nur der aktuelle Raum ist mit > markiert. */
+	@Test
+	@DisplayName("Karte markiert nur den aktuellen Raum mit >")
+	void mapMarksOnlyCurrentRoom() {
+		Player player = new Player(greenpath);
+
+		List<String> lines = actionsFor(player).mapLines();
+
+		assertTrue(lineFor(lines, WorldBuilder.GREENPATH).startsWith(">"));
+		assertEquals(1, lines.stream().filter(line -> line.startsWith(">")).count());
+	}
+
+	/** Die Karte zeigt gesperrte Ausgänge und Items im Raum. */
+	@Test
+	@DisplayName("Karte zeigt Sperren und Items")
+	void mapShowsBlockedExitsAndItems() {
+		Player player = new Player(world.getStartRoom());
+		world.getRoom(WorldBuilder.QUEENS_GARDENS).addItem(KeyItem.createKey());
+
+		List<String> lines = actionsFor(player).mapLines();
+
+		assertTrue(lineFor(lines, WorldBuilder.GREENPATH).contains("Blocked: east"));
+		assertTrue(lineFor(lines, WorldBuilder.QUEENS_GARDENS).contains("Items: key"));
+	}
+
+	/** Nach dem Öffnen zeigt die Karte den Ausgang nicht mehr als gesperrt. */
+	@Test
+	@DisplayName("Karte zeigt geöffneten Ausgang nicht mehr als gesperrt")
+	void mapUpdatesAfterUnlock() {
+		Player player = new Player(greenpath);
+		player.getInventory().add(KeyItem.createFlute());
+		WorldActions actions = actionsFor(player);
+
+		actions.useItem(new Command("use", "flute"));
+
+		assertTrue(lineFor(actions.mapLines(), WorldBuilder.GREENPATH).contains("Blocked: -"));
+	}
+
+	/** Eingabe 2 gibt Charmander mit Level 5. */
+	@Test
+	@DisplayName("Eingabe 2 wählt Charmander mit Level 5")
+	void choosesCharmander() {
+		Player player = new Player(world.getStartRoom());
+
+		actionsFor(player, "2\n").chooseStarter();
+
+		assertEquals(1, player.getPokemons().size());
+		assertEquals("Charmander", player.getPokemons().get(1).getName());
+		assertEquals(5, player.getPokemons().get(1).getLevel());
+	}
+
+	/** Nach ungültigen Eingaben wird nochmals gefragt, bis eine gültige kommt. */
+	@Test
+	@DisplayName("Ungültige Eingaben werden übersprungen")
+	void invalidInputAsksAgain() {
+		Player player = new Player(world.getStartRoom());
+
+		actionsFor(player, "abc\n9\n0\n3\n").chooseStarter();
+
+		assertEquals(1, player.getPokemons().size());
+		assertEquals("Bulbasaur", player.getPokemons().get(1).getName());
+	}
+
+	/** Bei leerer Eingabe (Ende der Eingabe) gibt es Cubchoo. */
+	@Test
+	@DisplayName("Leere Eingabe wählt Cubchoo")
+	void emptyInputChoosesCubchoo() {
+		Player player = new Player(world.getStartRoom());
+
+		actionsFor(player, "").chooseStarter();
+
+		assertEquals(1, player.getPokemons().size());
+		assertEquals("Cubchoo", player.getPokemons().get(1).getName());
 	}
 }
