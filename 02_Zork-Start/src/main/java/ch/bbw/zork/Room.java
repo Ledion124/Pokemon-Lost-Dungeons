@@ -42,6 +42,9 @@ public class Room {
 	/** Stellen, die man in diesem Raum mit search untersuchen kann. */
 	private final List<HidingSpot> hidingSpots = new ArrayList<>();
 
+	/** Das wilde Pokémon in diesem Raum oder null, wenn keins da ist. */
+	private Pokemon wildPokemon;
+
 	/**
 	 * Erstellt einen Raum ohne Ausgänge.
 	 *
@@ -280,10 +283,54 @@ public class Room {
 	}
 
 	/**
+	 * Gibt das wilde Pokémon in diesem Raum zurück.
+	 *
+	 * @return das wilde Pokémon oder null, wenn keins da ist
+	 */
+	public Pokemon getWildPokemon() {
+		return wildPokemon;
+	}
+
+	/**
+	 * Setzt das wilde Pokémon in diesem Raum. Ein vorheriges wird ersetzt.
+	 *
+	 * @param pokemon das neue wilde Pokémon
+	 */
+	public void setWildPokemon(Pokemon pokemon) {
+		this.wildPokemon = pokemon;
+	}
+
+	/**
+	 * Entfernt das wilde Pokémon aus dem Raum, z. B. nach einem Kampf oder scare.
+	 */
+	public void removeWildPokemon() {
+		this.wildPokemon = null;
+	}
+
+	/**
+	 * Prüft, ob in diesem Raum ein wildes Pokémon ist.
+	 *
+	 * @return true, wenn ein wildes Pokémon im Raum ist
+	 */
+	public boolean hasWildPokemon() {
+		return wildPokemon != null;
+	}
+
+	/**
+	 * Prüft, ob in diesem Raum normale wilde Pokémon spawnen.
+	 * In The Abyss steht nur der Boss, darum spawnt dort nichts.
+	 *
+	 * @return true, wenn das Level über 0 ist und der Raum nicht The Abyss ist
+	 */
+	public boolean isSpawnRoom() {
+		return pokemonLevel > 0 && !name.equals(WorldBuilder.THE_ABYSS);
+	}
+
+	/**
 	 * Lange Beschreibung mit Name, Beschreibung und Ausgängen.
 	 * Liegen Gegenstände im Raum, kommt die Zeile {@code Items: flute, key} dazu,
 	 * gibt es Stellen zum Untersuchen, die Zeile {@code You could search: ash, stump}.
-	 * Weitere Zeilen (Pokémon) werden später hinten angehängt.
+	 * Ist ein wildes Pokémon im Raum, kommt am Ende {@code A wild <Pokémon> appears!} dazu.
 	 *
 	 * @return mehrzeilige Beschreibung des Raums
 	 */
@@ -295,6 +342,9 @@ public class Room {
 		}
 		if (!hidingSpots.isEmpty()) {
 			stringBuilder.append("\n").append(hidingSpotString());
+		}
+		if (wildPokemon != null) {
+			stringBuilder.append("\n").append("A wild ").append(wildPokemon).append(" appears!");
 		}
 		return stringBuilder.toString();
 	}
