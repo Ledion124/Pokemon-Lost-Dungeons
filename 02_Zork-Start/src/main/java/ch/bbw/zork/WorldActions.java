@@ -1,5 +1,8 @@
 package ch.bbw.zork;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Befehle rund um Welt und Navigation, die über einfaches Gehen hinausgehen:
  * Gegenstände benutzen, Karte anzeigen und Starter wählen.
@@ -8,6 +11,9 @@ package ch.bbw.zork;
  * Besitzer: Engel.
  */
 public class WorldActions {
+
+	/** Alle Richtungen in der Reihenfolge, in der die Karte gesperrte Ausgänge zeigt. */
+	private static final String[] DIRECTIONS = {"north", "east", "south", "west"};
 
 	/** Liest Eingaben, z. B. für die Starter-Auswahl. */
 	private final Parser parser;
@@ -79,11 +85,60 @@ public class WorldActions {
 	}
 
 	/**
-	 * Zeigt alle Räume mit Items und gesperrten Ausgängen, der aktuelle Raum ist markiert.
-	 * TODO (Engel, Block 3): über world.getRooms() umsetzen.
+	 * Zeigt alle Räume mit Items und gesperrten Ausgängen, der aktuelle Raum ist
+	 * mit {@code >} markiert.
 	 */
 	public void showMap() {
-		System.out.println("'map' is not implemented yet.");
+		System.out.println("Map of the Lost Dungeons (> = you are here):");
+		for (String line : mapLines()) {
+			System.out.println(line);
+		}
+	}
+
+	/**
+	 * Baut die Zeilen der Karte, eine pro Raum aus {@code world.getRooms()}.
+	 * Getrennt von {@link #showMap()}, damit man die Karte ohne Konsole testen kann.
+	 *
+	 * @return eine Zeile pro Raum, z. B. {@code "> Greenpath | Items: - | Blocked: east"}
+	 */
+	List<String> mapLines() {
+		List<String> lines = new ArrayList<>();
+		for (Room room : world.getRooms()) {
+			String marker = room == player.getCurrentRoom() ? ">" : " ";
+			lines.add(String.format("%s %-21s | Items: %s | Blocked: %s",
+					marker, room.getName(), itemNames(room), blockedExits(room)));
+		}
+		return lines;
+	}
+
+	/**
+	 * Namen aller Items, die offen im Raum liegen.
+	 *
+	 * @param room der Raum
+	 * @return z. B. {@code "flute, key"} oder {@code "-"}, wenn keine da sind
+	 */
+	private String itemNames(Room room) {
+		List<String> names = new ArrayList<>();
+		for (Item item : room.getItems()) {
+			names.add(item.getName());
+		}
+		return names.isEmpty() ? "-" : String.join(", ", names);
+	}
+
+	/**
+	 * Alle gesperrten Ausgänge eines Raums.
+	 *
+	 * @param room der Raum
+	 * @return z. B. {@code "south, north"} oder {@code "-"}, wenn keiner gesperrt ist
+	 */
+	private String blockedExits(Room room) {
+		List<String> blocked = new ArrayList<>();
+		for (String direction : DIRECTIONS) {
+			if (room.isLocked(direction)) {
+				blocked.add(direction);
+			}
+		}
+		return blocked.isEmpty() ? "-" : String.join(", ", blocked);
 	}
 
 	/**
