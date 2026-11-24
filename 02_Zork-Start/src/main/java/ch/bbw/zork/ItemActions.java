@@ -23,8 +23,8 @@ public class ItemActions {
 	}
 
 	/**
-	 * Zeigt den aktuellen Raum mit Items, Verstecken und wildem Pokémon an.
-	 * TODO (Castelberg, Block 3): prüfen, ob noch etwas ergänzt werden muss.
+	 * Zeigt den aktuellen Raum mit Ausgängen, Items, Verstecken und wildem Pokémon an.
+	 * Alles davon steckt schon in {@link Room#longDescription()}.
 	 */
 	public void look() {
 		System.out.println(player.getCurrentRoom().longDescription());
@@ -50,11 +50,11 @@ public class ItemActions {
 		}
 		Item found = hidingSpot.search();
 		if (found == null) {
-			System.out.println("You search " + hidingSpot.getDescription() + ". You find nothing.");
+			System.out.println("You find nothing.");
 			return;
 		}
 		room.addItem(found);
-		System.out.println("You search " + hidingSpot.getDescription() + ". You found " + found.getName() + "!");
+		System.out.println("You found " + found.getName() + "!");
 	}
 
 	/**
