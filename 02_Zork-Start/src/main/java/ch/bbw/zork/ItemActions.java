@@ -31,13 +31,30 @@ public class ItemActions {
 	}
 
 	/**
-	 * Untersucht ein Versteck im aktuellen Raum.
-	 * TODO (Castelberg, Block 3): verstecktes Item in den Raum legen.
+	 * Untersucht ein Versteck im aktuellen Raum. Ein gefundener Gegenstand
+	 * liegt danach offen im Raum und kann mit {@code take} aufgenommen werden.
 	 *
 	 * @param command Befehl mit dem Namen des Verstecks als zweitem Wort
 	 */
 	public void search(Command command) {
-		System.out.println("'search' is not implemented yet.");
+		if (!command.hasSecondWord()) {
+			System.out.println("Search what?");
+			return;
+		}
+		String name = command.getSecondWord();
+		Room room = player.getCurrentRoom();
+		HidingSpot hidingSpot = room.getHidingSpot(name);
+		if (hidingSpot == null) {
+			System.out.println("There is no " + name + " here.");
+			return;
+		}
+		Item found = hidingSpot.search();
+		if (found == null) {
+			System.out.println("You search " + hidingSpot.getDescription() + ". You find nothing.");
+			return;
+		}
+		room.addItem(found);
+		System.out.println("You search " + hidingSpot.getDescription() + ". You found " + found.getName() + "!");
 	}
 
 	/**
