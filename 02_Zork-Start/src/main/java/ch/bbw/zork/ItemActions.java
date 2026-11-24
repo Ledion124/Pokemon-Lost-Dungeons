@@ -40,12 +40,29 @@ public class ItemActions {
 
 	/**
 	 * Nimmt einen Gegenstand aus dem Raum ins Inventar.
-	 * TODO (Castelberg, Block 3): mit Gewichtsprüfung über player.canCarry umsetzen.
+	 * Ist er zu schwer (Inventar + Pokémon über {@link Player#MAX_WEIGHT}), bleibt er liegen.
 	 *
 	 * @param command Befehl mit dem Namen des Gegenstands als zweitem Wort
 	 */
 	public void takeItem(Command command) {
-		System.out.println("'take' is not implemented yet.");
+		if (!command.hasSecondWord()) {
+			System.out.println("Take what?");
+			return;
+		}
+		String name = command.getSecondWord();
+		Room room = player.getCurrentRoom();
+		Item item = room.getItem(name);
+		if (item == null) {
+			System.out.println("There is no " + name + " here.");
+			return;
+		}
+		if (!player.canCarry(item.getWeight())) {
+			System.out.println("That is too heavy. Drop something or release a Pokémon first.");
+			return;
+		}
+		room.removeItem(item.getName());
+		player.getInventory().add(item);
+		System.out.println("You take the " + item.getName() + ".");
 	}
 
 	/**
