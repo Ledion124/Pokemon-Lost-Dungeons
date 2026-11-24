@@ -1,5 +1,7 @@
 package ch.bbw.zork;
 
+import java.util.Locale;
+
 /**
  * Befehle rund um Gegenstände: umsehen, Verstecke untersuchen, aufnehmen,
  * ablegen und Inventar anzeigen. {@link Game} ruft diese Methoden nur auf.
@@ -85,10 +87,31 @@ public class ItemActions {
 	}
 
 	/**
-	 * Zeigt alle getragenen Gegenstände und das Gesamtgewicht an.
-	 * TODO (Castelberg, Block 3): umsetzen.
+	 * Zeigt alle getragenen Gegenstände mit Gewicht, danach das Gewicht der Pokémon
+	 * und das Gesamtgewicht im Vergleich zum Maximum.
 	 */
 	public void showInventory() {
-		System.out.println("'inventory' is not implemented yet.");
+		Inventory inventory = player.getInventory();
+		if (inventory.isEmpty()) {
+			System.out.println("You are not carrying any items.");
+		} else {
+			System.out.println("You are carrying:");
+			for (Item item : inventory.getItems()) {
+				System.out.println("  " + item);
+			}
+		}
+		System.out.println("Pokémon: " + formatWeight(player.getPokemons().getTotalWeight()));
+		System.out.println("Total: " + formatWeight(player.getTotalWeight())
+				+ " / " + formatWeight(Player.MAX_WEIGHT));
+	}
+
+	/**
+	 * Formatiert ein Gewicht mit 2 Nachkommastellen und Punkt als Dezimaltrenner.
+	 *
+	 * @param weight Gewicht in kg
+	 * @return z. B. "1.50 kg"
+	 */
+	private static String formatWeight(double weight) {
+		return String.format(Locale.ROOT, "%.2f kg", weight);
 	}
 }
