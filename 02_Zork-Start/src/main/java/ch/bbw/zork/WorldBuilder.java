@@ -37,7 +37,7 @@ public class WorldBuilder {
 	/** Raumname: Ausgang, wer ihn betritt, gewinnt. */
 	public static final String EXIT = "Exit";
 
-	/** Zufallsgenerator, mit dem in Block 3 die Flöte versteckt wird. */
+	/** Zufallsgenerator, mit dem die Flöte versteckt wird. */
 	private final Random random;
 
 	/** Alle Räume in der Reihenfolge der Raumnamen-Tabelle. */
@@ -109,11 +109,27 @@ public class WorldBuilder {
 
 	/**
 	 * Verteilt die Gegenstände in der Welt: Der Schlüssel liegt offen in den Queen's Gardens,
-	 * jeder Raum ausser Exit bekommt seine Stellen zum Untersuchen (Tabelle "Stellen pro Raum" in Idee.md).
+	 * jeder Raum ausser Exit bekommt seine Stellen zum Untersuchen (Tabelle "Stellen pro Raum" in Idee.md),
+	 * und die Flöte wird in einer zufälligen Stelle der erreichbaren Räume versteckt.
 	 */
 	private void placeItems() {
 		getRoom(QUEENS_GARDENS).addItem(KeyItem.createKey());
 		addHidingSpots();
+		hideFlute();
+	}
+
+	/**
+	 * Versteckt die Flöte in einer zufälligen Stelle. In Frage kommen nur Räume,
+	 * die man erreicht, bevor Relaxo im Greenpath geweckt ist.
+	 */
+	private void hideFlute() {
+		String[] fluteRooms = {ASHFALL_VALLEY, CITY_OF_TEARS, FORGOTTEN_CROSSROADS, FOG_CANYON,
+				WHITE_PALACE, ANCIENT_TREASURES, ROYALE_WATERWAYS};
+		List<HidingSpot> candidates = new ArrayList<>();
+		for (String roomName : fluteRooms) {
+			candidates.addAll(getRoom(roomName).getHidingSpots());
+		}
+		candidates.get(random.nextInt(candidates.size())).hideItem(KeyItem.createFlute());
 	}
 
 	/**
