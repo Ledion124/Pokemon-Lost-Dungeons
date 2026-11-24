@@ -104,6 +104,14 @@ public class WorldBuilder {
 
 		exit.setWinRoom(true);
 		startRoom = ashfallValley;
+		placeItems();
+	}
+
+	/**
+	 * Verteilt die Gegenstände in der Welt: Der Schlüssel liegt offen in den Queen's Gardens.
+	 */
+	private void placeItems() {
+		getRoom(QUEENS_GARDENS).addItem(KeyItem.createKey());
 	}
 
 	/**
