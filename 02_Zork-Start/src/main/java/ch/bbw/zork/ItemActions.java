@@ -118,7 +118,7 @@ public class ItemActions {
 			}
 		}
 		System.out.println("Pokémon: " + formatWeight(player.getPokemons().getTotalWeight()));
-		System.out.println("Total: " + formatWeight(player.getTotalWeight())
+		System.out.println("Total: " + String.format(Locale.ROOT, "%.2f", player.getTotalWeight())
 				+ " / " + formatWeight(Player.MAX_WEIGHT));
 	}
 
