@@ -11,7 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests für {@link ItemActions}: take und drop. Die Ausgabe auf der Konsole
+ * Tests für {@link ItemActions}: take, drop, search, inventory und look. Die Ausgabe auf der Konsole
  * wird abgefangen, damit auch die Meldungen geprüft werden können.
  */
 class ItemActionsTest {
@@ -149,5 +149,81 @@ class ItemActionsTest {
 
         assertEquals("You don't have that.", output());
         assertTrue(room.getItems().isEmpty());
+    }
+
+    // ===================== search =====================
+
+    /** search findet das versteckte Item und legt es in den Raum. */
+    @Test
+    @DisplayName("search legt gefundenes Item in den Raum")
+    void searchPutsItemIntoRoom() {
+        HidingSpot ash = new HidingSpot("ash", "a pile of ash");
+        ash.hideItem(KeyItem.createFlute());
+        room.addHidingSpot(ash);
+
+        actions.search(new Command("search", "Ash"));
+
+        assertEquals("You found flute!", output());
+        assertNotNull(room.getItem("flute"));
+        assertFalse(ash.hasHiddenItem());
+    }
+
+    /** Eine leere oder schon untersuchte Stelle gibt nichts her. */
+    @Test
+    @DisplayName("search an leerer Stelle meldet 'You find nothing.'")
+    void searchEmptySpot() {
+        room.addHidingSpot(new HidingSpot("ash", "a pile of ash"));
+
+        actions.search(new Command("search", "ash"));
+
+        assertEquals("You find nothing.", output());
+        assertTrue(room.getItems().isEmpty());
+    }
+
+    /** search einer Stelle, die es im Raum nicht gibt, gibt eine Meldung mit dem Namen. */
+    @Test
+    @DisplayName("search einer fehlenden Stelle meldet 'There is no ... here.'")
+    void searchUnknownSpot() {
+        actions.search(new Command("search", "well"));
+
+        assertEquals("There is no well here.", output());
+    }
+
+    /** search ohne zweites Wort fragt nach. */
+    @Test
+    @DisplayName("search ohne zweites Wort fragt 'Search what?'")
+    void searchWithoutSecondWord() {
+        actions.search(new Command("search"));
+
+        assertEquals("Search what?", output());
+    }
+
+    // ===================== inventory und look =====================
+
+    /** inventory zeigt jedes Item mit Gewicht, das Pokémon-Gewicht und das Total. */
+    @Test
+    @DisplayName("inventory zeigt Items, Pokémon-Gewicht und Total")
+    void showInventoryListsItemsAndWeights() {
+        player.getInventory().add(KeyItem.createFlute());
+        player.getInventory().add(KeyItem.createKey());
+
+        actions.showInventory();
+
+        String text = output();
+        assertTrue(text.contains("flute (0.50 kg)"));
+        assertTrue(text.contains("key (0.20 kg)"));
+        assertTrue(text.contains("Pokémon: 0.00 kg"));
+        assertTrue(text.endsWith("Total: 0.70 / 20.00 kg"));
+    }
+
+    /** look gibt die lange Beschreibung des aktuellen Raums aus. */
+    @Test
+    @DisplayName("look gibt die lange Raumbeschreibung aus")
+    void lookPrintsLongDescription() {
+        room.addItem(KeyItem.createKey());
+
+        actions.look();
+
+        assertEquals(room.longDescription(), output());
     }
 }
