@@ -66,13 +66,22 @@ public class ItemActions {
 	}
 
 	/**
-	 * Legt einen Gegenstand aus dem Inventar in den Raum.
-	 * TODO (Castelberg, Block 3): umsetzen.
+	 * Legt einen Gegenstand aus dem Inventar in den aktuellen Raum.
 	 *
 	 * @param command Befehl mit dem Namen des Gegenstands als zweitem Wort
 	 */
 	public void dropItem(Command command) {
-		System.out.println("'drop' is not implemented yet.");
+		if (!command.hasSecondWord()) {
+			System.out.println("Drop what?");
+			return;
+		}
+		Item item = player.getInventory().remove(command.getSecondWord());
+		if (item == null) {
+			System.out.println("You don't have that.");
+			return;
+		}
+		player.getCurrentRoom().addItem(item);
+		System.out.println("You drop the " + item.getName() + ".");
 	}
 
 	/**
