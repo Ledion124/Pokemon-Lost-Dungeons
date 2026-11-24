@@ -108,10 +108,84 @@ public class WorldBuilder {
 	}
 
 	/**
-	 * Verteilt die Gegenstände in der Welt: Der Schlüssel liegt offen in den Queen's Gardens.
+	 * Verteilt die Gegenstände in der Welt: Der Schlüssel liegt offen in den Queen's Gardens,
+	 * jeder Raum ausser Exit bekommt seine Stellen zum Untersuchen (Tabelle "Stellen pro Raum" in Idee.md).
 	 */
 	private void placeItems() {
 		getRoom(QUEENS_GARDENS).addItem(KeyItem.createKey());
+		addHidingSpots();
+	}
+
+	/**
+	 * Fügt allen Räumen ausser Exit ihre Stellen zum Untersuchen hinzu.
+	 * Jedes Paar ist Befehlswort + englische Beschreibung.
+	 */
+	private void addHidingSpots() {
+		addHidingSpots(ASHFALL_VALLEY,
+				"ash", "a pile of ash",
+				"stump", "a charred tree stump",
+				"crack", "a crack in the rock");
+		addHidingSpots(CITY_OF_TEARS,
+				"gutter", "a rain gutter",
+				"house", "a collapsed house",
+				"well", "an old well",
+				"puddle", "a deep puddle");
+		addHidingSpots(FORGOTTEN_CROSSROADS,
+				"signpost", "an old signpost",
+				"rubble", "a pile of rubble");
+		addHidingSpots(FOG_CANYON,
+				"ledge", "a rocky ledge",
+				"hole", "a hole in the fog",
+				"rock", "a fallen rock");
+		addHidingSpots(WHITE_PALACE,
+				"throne", "a white throne",
+				"pillar", "a marble pillar",
+				"statue", "a broken statue",
+				"niche", "a niche in the wall",
+				"chandelier", "a crystal chandelier");
+		addHidingSpots(THE_ABYSS,
+				"crack", "a dark crack",
+				"bones", "a pile of bones");
+		addHidingSpots(ANCIENT_TREASURES,
+				"chest", "a treasure chest",
+				"coins", "a pile of coins",
+				"shelf", "a wall shelf",
+				"urn", "an ancient urn",
+				"sarcophagus", "a stone sarcophagus");
+		addHidingSpots(KINGS_PASS,
+				"crack", "a crack in the rock",
+				"stones", "a pile of stones",
+				"cave", "a cave entrance");
+		addHidingSpots(QUEENS_GARDENS,
+				"bush", "a rose bush",
+				"fountain", "a fountain",
+				"bench", "a garden bench",
+				"flowerbed", "a flowerbed");
+		addHidingSpots(RESTING_GROUNDS,
+				"gravestone", "a gravestone",
+				"crypt", "a crypt",
+				"wreath", "a withered wreath");
+		addHidingSpots(GREENPATH,
+				"moss", "a thick cushion of moss",
+				"tree", "a hollow tree");
+		addHidingSpots(ROYALE_WATERWAYS,
+				"grate", "a drain grate",
+				"basin", "a water basin",
+				"pipe", "a rusty pipe",
+				"driftwood", "a heap of driftwood");
+	}
+
+	/**
+	 * Fügt einem Raum mehrere Stellen zum Untersuchen hinzu.
+	 *
+	 * @param roomName             Name des Raums
+	 * @param namesAndDescriptions abwechselnd Befehlswort und Beschreibung
+	 */
+	private void addHidingSpots(String roomName, String... namesAndDescriptions) {
+		Room room = getRoom(roomName);
+		for (int i = 0; i + 1 < namesAndDescriptions.length; i += 2) {
+			room.addHidingSpot(new HidingSpot(namesAndDescriptions[i], namesAndDescriptions[i + 1]));
+		}
 	}
 
 	/**
