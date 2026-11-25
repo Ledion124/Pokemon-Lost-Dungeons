@@ -77,6 +77,7 @@ src/test/java/ch/bbw/zork/     JUnit-Tests
 docs/
   Idee.md          Spielidee, Räume, Pokémon-Liste, Klassendiagramm
   Architektur.md   Aufbau des Codes und wichtige Umsetzungen
+  Items.md         Gegenstände, Gewicht, Inventar und Verstecke
   Plan.md          Arbeitsplan und Aufteilung im Team
   Map.png          Karte der Räume
 ```

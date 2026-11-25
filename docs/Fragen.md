@@ -6,13 +6,13 @@
 
 **Antwort:** Die Objekte werden im Konstruktor von `Game` erzeugt:
 
-\`\`\`java
+```java
 outside = new Room("outside G block on Peninsula campus");
 lab     = new Room("lab, a lecture theatre in A block");
 tavern  = new Room("the Seahorse Tavern (the campus pub)");
 gblock  = new Room("the G Block");
 office  = new Room("the computing admin office");
-\`\`\`
+```
 
 ---
 
@@ -20,17 +20,18 @@ office  = new Room("the computing admin office");
 
 **Frage:** Suchen Sie den Konstruktor der Klasse `Room` und schreiben Sie die Signatur hier hin.
 
-**Antwort:**
+**Antwort:** In der Vorlage hatte der Konstruktor nur eine Beschreibung als Parameter (`Room(String description)`). In unserem Spiel hat ein Raum zusätzlich einen Namen und ein Pokémon-Level, darum sieht der Konstruktor jetzt so aus:
 
-\`\`\`java
+```java
 /**
-* Erstellt einen neuen Raum mit der angegebenen Beschreibung.
-* Die Ausgänge (exits) werden zu Beginn leer initialisiert.
-*
-* @param description Die Beschreibung des Raums
-  */
-  public Room(String description)
-  \`\`\`
+ * Erstellt einen Raum ohne Ausgänge.
+ *
+ * @param name         Name des Raums, z. B. "Ashfall Valley"
+ * @param description  englische Beschreibung des Raums
+ * @param pokemonLevel Level der Pokémon, die hier spawnen (0 = keine)
+ */
+public Room(String name, String description, int pokemonLevel)
+```
 
 ---
 
@@ -40,23 +41,23 @@ office  = new Room("the computing admin office");
 
 **Antwort:**
 
-\`\`\`java
+```java
 /**
-* Erstellt ein Command-Objekt ohne zweites Wort.
-* Ruft den Konstruktor mit zwei Parametern auf und setzt secondWord auf null.
-*
-* @param commandWord Das erste Wort des Befehls
-  */
-  public Command(String commandWord)
+ * Erstellt ein Command-Objekt ohne zweites Wort.
+ * Ruft den Konstruktor mit zwei Parametern auf und setzt secondWord auf null.
+ *
+ * @param commandWord Das erste Wort des Befehls
+ */
+public Command(String commandWord)
 
 /**
-* Erstellt ein Command-Objekt mit einem ersten und einem zweiten Wort.
-*
-* @param commandWord Das erste Wort des Befehls
-* @param secondWord Das zweite Wort des Befehls, oder null falls keines vorhanden ist
-  */
-  public Command(String commandWord, String secondWord)
-  \`\`\`
+ * Erstellt ein Command-Objekt mit einem ersten und einem zweiten Wort.
+ *
+ * @param commandWord Das erste Wort des Befehls
+ * @param secondWord Das zweite Wort des Befehls, oder null falls keines vorhanden ist
+ */
+public Command(String commandWord, String secondWord)
+```
 
 ---
 
@@ -66,14 +67,14 @@ office  = new Room("the computing admin office");
 
 **Antwort:**
 
-\`\`\`java
+```java
 public void setExits(Room north, Room east, Room south, Room west) {
-exits.put("north", north);
-exits.put("east", east);
-exits.put("south", south);
-exits.put("west", west);
+    exits.put("north", north);
+    exits.put("east", east);
+    exits.put("south", south);
+    exits.put("west", west);
 }
-\`\`\`
+```
 
 ---
 
@@ -83,13 +84,13 @@ exits.put("west", west);
 
 **Antwort:** Das befindet sich in der Klasse `Game`:
 
-\`\`\`java
+```java
 outside.setExits(null, lab, gblock, tavern);
 lab.setExits(null, null, null, outside);
 tavern.setExits(null, outside, null, null);
 gblock.setExits(outside, office, null, null);
 office.setExits(null, null, null, gblock);
-\`\`\`
+```
 
 ---
 
@@ -99,13 +100,13 @@ office.setExits(null, null, null, gblock);
 
 **Antwort:** Die Logik befindet sich in der Methode `goRoom` in der Klasse `Game`:
 
-\`\`\`java
+```java
 private void goRoom(Command command) {
-if (!command.hasSecondWord()) {
-System.out.println("Go where?");
-} else {
-String direction = command.getSecondWord();
-Room nextRoom = currentRoom.nextRoom(direction);
+    if (!command.hasSecondWord()) {
+        System.out.println("Go where?");
+    } else {
+        String direction = command.getSecondWord();
+        Room nextRoom = currentRoom.nextRoom(direction);
 
         if (nextRoom == null) {
             System.out.println("There is no door!");
@@ -119,4 +120,4 @@ Room nextRoom = currentRoom.nextRoom(direction);
         }
     }
 }
-\`\`\`
+```
