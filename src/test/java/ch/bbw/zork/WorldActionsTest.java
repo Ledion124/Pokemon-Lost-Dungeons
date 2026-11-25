@@ -14,6 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * Tests für {@link WorldActions}: Benutzen von Gegenständen mit {@code use},
  * die Karte und die Starter-Auswahl. Geprüft wird der Zustand danach
  * (Ausgang offen, Item weg, Pokémon im Team) bzw. die Zeilen der Karte.
+ *
+ * @author Louis Engel
  */
 class WorldActionsTest {
 

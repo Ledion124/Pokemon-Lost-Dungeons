@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests für {@link Item}: Konstruktor, Getter und toString.
+ *
+ * @author Silvan Castelberg
  */
 class ItemTest {
 

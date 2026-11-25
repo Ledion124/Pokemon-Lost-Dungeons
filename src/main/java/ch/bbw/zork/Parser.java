@@ -12,6 +12,8 @@ import java.io.InputStreamReader;
  *
  * author:  Michael Kolling, Version: 1.0, Date: July 1999
  * refactoring: Rinaldo Lanza, September 2020
+ *
+ * @author Louis Engel
  */
 public class Parser {
 

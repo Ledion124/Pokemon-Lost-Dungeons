@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests für {@link HidingSpot}: Name, Beschreibung, Verstecken und Untersuchen.
+ *
+ * @author Silvan Castelberg
  */
 class HidingSpotTest {
 

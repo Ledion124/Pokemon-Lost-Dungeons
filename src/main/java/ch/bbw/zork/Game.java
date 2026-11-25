@@ -10,6 +10,8 @@ import java.util.Random;
  *
  * Author:  Michael Kolling, 1.1, March 2000
  * refactoring: Rinaldo Lanza, September 2020
+ *
+ * @author Louis Engel
  */
 public class Game {
 

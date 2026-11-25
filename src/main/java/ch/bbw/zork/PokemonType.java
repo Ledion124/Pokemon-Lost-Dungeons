@@ -3,6 +3,8 @@ package ch.bbw.zork;
 /**
  * Die Typen der Pokémon. Ein Typ bestimmt, gegen welche anderen Typen ein
  * Pokémon im Kampf stark oder schwach ist.
+ *
+ * @author Ledion Sakaj
  */
 public enum PokemonType {
     /** Feuer-Typ. */

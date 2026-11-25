@@ -5,6 +5,8 @@ package ch.bbw.zork;
  * 
  * author: Michael Kolling version: 1.0 date: July 1999
  * refactoring: Rinaldo Lanza, September 2020
+ *
+ * @author Louis Engel
  */
 
 public class Command {

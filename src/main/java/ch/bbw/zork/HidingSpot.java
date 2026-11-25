@@ -3,6 +3,8 @@ package ch.bbw.zork;
 /**
  * Eine Stelle in einem Raum, die der Spieler mit {@code search} untersuchen kann,
  * z. B. ein Aschehaufen. Darin kann ein Gegenstand versteckt sein.
+ *
+ * @author Silvan Castelberg
  */
 public class HidingSpot {
 

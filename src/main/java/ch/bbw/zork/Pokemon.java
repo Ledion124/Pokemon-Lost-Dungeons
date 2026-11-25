@@ -6,6 +6,8 @@ import java.util.Locale;
  * Ein Pokémon im Spiel. Es hat einen Typ, ein Level und Basiswerte,
  * aus denen HP und Angriff berechnet werden. Es kann kämpfen,
  * Schaden nehmen, geheilt werden und aufleveln.
+ *
+ * @author Ledion Sakaj
  */
 public class Pokemon {
 

@@ -7,6 +7,9 @@ import java.util.Locale;
  * ablegen und Inventar anzeigen. {@link Game} ruft diese Methoden nur auf.
  *
  * Besitzer: Castelberg.
+ *
+ * @author Silvan Castelberg
+ * @author Louis Engel
  */
 public class ItemActions {
 

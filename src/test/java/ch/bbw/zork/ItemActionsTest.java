@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests für {@link ItemActions}: take, drop, search, inventory und look. Die Ausgabe auf der Konsole
  * wird abgefangen, damit auch die Meldungen geprüft werden können.
+ *
+ * @author Silvan Castelberg
  */
 class ItemActionsTest {
 

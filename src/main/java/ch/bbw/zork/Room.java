@@ -12,6 +12,10 @@ import java.util.Map;
  *
  * Author:  Michael Kolling, Version: 1.1, Date: August 2000
  * refactoring: Rinaldo Lanza, September 2020
+ *
+ * @author Louis Engel
+ * @author Silvan Castelberg
+ * @author Ledion Sakaj
  */
 public class Room {
 

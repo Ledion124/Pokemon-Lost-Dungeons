@@ -6,6 +6,8 @@ import java.util.List;
 /**
  * Ein Kampf zwischen dem Team des Spielers (1 bis 3 Pokémon) und einem gegnerischen Pokémon.
  * Der Verlauf wird nicht ausgegeben, sondern in einem Log gesammelt.
+ *
+ * @author Ledion Sakaj
  */
 public class Battle {
 

@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests für {@link CommandWords}: welche Wörter gültige Befehle sind.
+ *
+ * @author Louis Engel
  */
 class CommandWordsTest {
 

@@ -3,6 +3,8 @@ package ch.bbw.zork;
 /**
  * Ein Gegenstand, der in einem bestimmten Raum einen gesperrten Ausgang öffnet.
  * Die Flöte weckt Relaxo im Greenpath, der Schlüssel öffnet die Tür im White Palace.
+ *
+ * @author Silvan Castelberg
  */
 public class KeyItem extends Item {
 

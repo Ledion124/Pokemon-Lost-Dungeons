@@ -12,6 +12,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * Tests für {@link Parser}: Befehle einlesen mit {@code getCommand} und
  * freie Eingaben mit {@code readLine}. Die Eingabe kommt aus einem String
  * statt von der Konsole.
+ *
+ * @author Louis Engel
  */
 class ParserTest {
 

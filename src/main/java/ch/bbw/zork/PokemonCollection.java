@@ -6,6 +6,8 @@ import java.util.List;
 /**
  * Die Pokémon-Sammlung des Spielers. Die Pokémon werden im Spiel
  * über Nummern angesprochen, die bei 1 beginnen.
+ *
+ * @author Ledion Sakaj
  */
 public class PokemonCollection {
 

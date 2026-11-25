@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests für die Klasse PokemonCollection.
+ *
+ * @author Ledion Sakaj
  */
 class PokemonCollectionTest {
 

@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests für die Klasse Pokemon.
+ *
+ * @author Ledion Sakaj
  */
 class PokemonTest {
 

@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests für den Item- und Versteck-Teil von {@link Room}.
+ *
+ * @author Silvan Castelberg
  */
 class RoomItemTest {
 

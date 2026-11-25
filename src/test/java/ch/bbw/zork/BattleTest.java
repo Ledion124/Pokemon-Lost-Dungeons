@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests für die Klasse Battle.
+ *
+ * @author Ledion Sakaj
  */
 class BattleTest {
 

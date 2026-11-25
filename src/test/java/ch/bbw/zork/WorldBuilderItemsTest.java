@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests für die Gegenstände in der Welt, die {@link WorldBuilder} mit placeItems verteilt.
+ *
+ * @author Silvan Castelberg
  */
 class WorldBuilderItemsTest {
 

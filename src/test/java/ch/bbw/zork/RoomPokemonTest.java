@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests für den Pokémon-Teil von {@link Room}.
+ *
+ * @author Ledion Sakaj
  */
 class RoomPokemonTest {
 

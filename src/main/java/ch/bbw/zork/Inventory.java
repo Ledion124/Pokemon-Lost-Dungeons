@@ -7,6 +7,8 @@ import java.util.List;
  * Die Gegenstände, die der Spieler bei sich trägt.
  * Namen werden ohne Beachtung der Gross-/Kleinschreibung verglichen.
  * Ein Maximalgewicht gibt es hier nicht, das prüft der Player.
+ *
+ * @author Silvan Castelberg
  */
 public class Inventory {
 

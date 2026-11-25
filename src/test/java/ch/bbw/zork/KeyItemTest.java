@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests für {@link KeyItem}: Konstruktor, Vererbung und die Fabrikmethoden.
+ *
+ * @author Silvan Castelberg
  */
 class KeyItemTest {
 

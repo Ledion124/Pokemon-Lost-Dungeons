@@ -9,6 +9,8 @@ import java.util.List;
  * {@link Game} ruft diese Methoden nur auf.
  *
  * Besitzer: Engel.
+ *
+ * @author Louis Engel
  */
 public class WorldActions {
 

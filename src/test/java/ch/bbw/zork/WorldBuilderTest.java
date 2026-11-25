@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests für {@link WorldBuilder}: Räume, Ausgänge, Einbahnwege, Sperren und Exit.
+ *
+ * @author Louis Engel
  */
 class WorldBuilderTest {
 

@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests für {@link PokemonActions}. Die Eingaben des Spielers kommen
  * aus einem String statt von der Konsole.
+ *
+ * @author Ledion Sakaj
  */
 class PokemonActionsTest {
 

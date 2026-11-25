@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests für {@link Player}: Bewegung, Zurückgehen mit {@code back} und Gewicht.
+ *
+ * @author Louis Engel
  */
 class PlayerTest {
 

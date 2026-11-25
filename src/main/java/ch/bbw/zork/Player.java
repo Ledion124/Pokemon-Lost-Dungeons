@@ -7,6 +7,8 @@ import java.util.Stack;
  * welche Gegenstände er trägt und welche Pokémon er dabei hat.
  * Die besuchten Räume liegen auf einem Stack, damit {@code back} Schritt für
  * Schritt zurückgehen kann.
+ *
+ * @author Louis Engel
  */
 public class Player {
 

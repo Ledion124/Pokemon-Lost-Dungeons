@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests für {@link Room}: Ausgänge, Sperren, hasExitTo und die Beschreibungen.
+ *
+ * @author Louis Engel
  */
 class RoomTest {
 

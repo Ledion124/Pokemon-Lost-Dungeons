@@ -5,6 +5,8 @@ import java.util.Locale;
 /**
  * Ein Gegenstand, der in einem Raum liegen oder vom Spieler getragen werden kann.
  * Hat einen Namen, eine Beschreibung und ein Gewicht in kg.
+ *
+ * @author Silvan Castelberg
  */
 public class Item {
 

@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests für {@link Inventory}: Hinzufügen, Entfernen, Suchen und Gewicht.
+ *
+ * @author Silvan Castelberg
  */
 class InventoryTest {
 

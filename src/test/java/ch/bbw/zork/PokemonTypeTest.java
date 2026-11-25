@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests für {@link PokemonType}: Anzeigename und Schadensfaktoren.
+ *
+ * @author Ledion Sakaj
  */
 class PokemonTypeTest {
 

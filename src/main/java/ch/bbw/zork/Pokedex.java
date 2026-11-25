@@ -8,6 +8,8 @@ import java.util.Random;
  * Der Katalog aller 20 Pokémon, die im Spiel vorkommen können, und des Bosses Arceus.
  * Er erstellt neue Pokémon mit ihren Grundwerten aus docs/Idee.md.
  * Arceus ist nicht Teil des Katalogs und wird nur über createBoss() erstellt.
+ *
+ * @author Ledion Sakaj
  */
 public class Pokedex {
 

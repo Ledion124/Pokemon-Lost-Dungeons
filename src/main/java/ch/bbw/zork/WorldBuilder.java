@@ -7,6 +7,9 @@ import java.util.Random;
 /**
  * Baut die Spielwelt: alle 13 Räume mit Beschreibung, Pokémon-Level,
  * Ausgängen und Sperren. Siehe docs/Idee.md (Räume, Ausgänge).
+ *
+ * @author Louis Engel
+ * @author Silvan Castelberg
  */
 public class WorldBuilder {
 

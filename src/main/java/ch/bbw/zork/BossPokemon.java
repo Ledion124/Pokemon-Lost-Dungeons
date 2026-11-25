@@ -3,6 +3,8 @@ package ch.bbw.zork;
 /**
  * Ein Boss-Pokémon. Es kämpft wie ein normales Pokémon,
  * kann aber nicht verscheucht werden und hat einen eigenen Text, wenn es besiegt wird.
+ *
+ * @author Ledion Sakaj
  */
 public class BossPokemon extends Pokemon {
 

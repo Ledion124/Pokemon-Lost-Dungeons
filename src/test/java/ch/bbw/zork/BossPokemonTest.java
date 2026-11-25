@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests für die Klasse BossPokemon.
+ *
+ * @author Ledion Sakaj
  */
 class BossPokemonTest {
 

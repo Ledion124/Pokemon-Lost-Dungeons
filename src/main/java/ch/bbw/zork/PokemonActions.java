@@ -10,6 +10,9 @@ import java.util.Random;
  * Team anzeigen und freilassen. {@link Game} ruft diese Methoden nur auf.
  *
  * Besitzer: Sakaj.
+ *
+ * @author Ledion Sakaj
+ * @author Louis Engel
  */
 public class PokemonActions {
 
