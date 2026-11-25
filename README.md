@@ -66,6 +66,7 @@ Bei `fight` wählst du bis zu drei Pokémon über ihre Nummer aus `team`, z. B. 
 - Pokémon, die in einem gewonnenen Kampf mitgemacht haben, steigen um 2 Level. Nach jedem Kampf werden alle Pokémon geheilt.
 - Du kannst insgesamt 20 kg tragen. Gegenstände und Pokémon zählen zusammen, Pokémon allerdings nur mit einem Zehntel ihres Gewichts, weil sie im Pokéball sind.
 - Manche Wege sind Einbahnstrassen. Wer dort durchgeht, kommt mit `back` nicht mehr zurück und muss einen anderen Weg finden.
+- Es lohnt sich, mit `search` die Stellen in den Räumen zu untersuchen. Ausser der Flöte sind dort noch ein paar andere Gegenstände versteckt, manche davon ziemlich schwer.
 - Ist ein Gegner zu stark, kannst du `scare` benutzen. Beim nächsten Betreten des Raums taucht ein neues Pokémon auf.
 
 ## Projektstruktur

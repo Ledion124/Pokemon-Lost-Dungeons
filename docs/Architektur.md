@@ -41,7 +41,7 @@ Zork2 (main)
 
 | Klasse | Aufgabe |
 |---|---|
-| `WorldBuilder` | Erstellt alle 13 Räume mit Beschreibung und Pokémon-Level, verbindet die Ausgänge, setzt die drei Sperren, legt die Verstecke an und versteckt die Flöte zufällig. Die Raumnamen sind als Konstanten abgelegt (`WorldBuilder.WHITE_PALACE` usw.), damit sich niemand vertippt. |
+| `WorldBuilder` | Erstellt alle 13 Räume mit Beschreibung und Pokémon-Level, verbindet die Ausgänge, setzt die drei Sperren, legt die Verstecke an, versteckt fünf Fundsachen (`stone`, `tablet`, `ring`, `honey`, `skull`) an festen Orten und die Flöte zufällig. Die Fundsachen liegen nur in Räumen, in denen die Flöte nie liegt, weil ein Versteck nur einen Gegenstand halten kann. Die Raumnamen sind als Konstanten abgelegt (`WorldBuilder.WHITE_PALACE` usw.), damit sich niemand vertippt. |
 | `Room` | Ein Raum. Kennt seine Ausgänge (inkl. gesperrter), die Gegenstände am Boden, die Verstecke und das wilde Pokémon. `longDescription()` baut daraus den Text, den der Spieler sieht. |
 | `Player` | Der Spieler: aktueller Raum, Verlauf für `back`, Inventar und Pokémon-Sammlung. Prüft auch das Maximalgewicht von 20 kg. |
 | `WorldActions` | Befehle `use` und `map` sowie die Wahl des Starter-Pokémon. |
@@ -98,6 +98,8 @@ Ob Arceus schon besiegt ist, speichern wir nicht in einem eigenen Feld. Es gilt 
 ## Gewicht
 
 Gegenstände und Pokémon teilen sich ein gemeinsames Maximalgewicht von 20 kg. Pokémon zählen nur mit einem Zehntel ihres Gewichts, weil sie im Pokéball getragen werden. `Player.canCarry()` rechnet beides zusammen und wird von `take` und beim Fangen eines Pokémon benutzt. Weil `double` nicht ganz genau rechnet, vergleichen wir mit einer kleinen Toleranz.
+
+Damit das Maximalgewicht im Spiel auch wirklich eine Rolle spielt, gibt es neben Flöte und Schlüssel noch die Fundsachen in den Verstecken. Die schwerste ist die `tablet` mit 12 kg. Wer schon den `stone` (5 kg) und ein paar Pokémon dabei hat, kann sie nicht mehr aufnehmen und muss zuerst etwas ablegen oder ein Pokémon freilassen.
 
 ## Zufall und Tests
 

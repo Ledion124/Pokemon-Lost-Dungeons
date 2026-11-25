@@ -68,6 +68,16 @@ public class HidingSpot {
     }
 
     /**
+     * Gibt den versteckten Gegenstand zurück, ohne ihn herauszunehmen.
+     * Anders als {@link #search()} bleibt die Stelle dabei voll.
+     *
+     * @return der versteckte Gegenstand oder null, wenn die Stelle leer ist
+     */
+    public Item getHiddenItem() {
+        return hiddenItem;
+    }
+
+    /**
      * Prüft, ob an dieser Stelle noch etwas versteckt ist.
      *
      * @return true, wenn ein Gegenstand versteckt ist

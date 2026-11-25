@@ -113,12 +113,38 @@ public class WorldBuilder {
 	/**
 	 * Verteilt die Gegenstände in der Welt: Der Schlüssel liegt offen in den Queen's Gardens,
 	 * jeder Raum ausser Exit bekommt seine Stellen zum Untersuchen (Tabelle "Stellen pro Raum" in Idee.md),
-	 * und die Flöte wird in einer zufälligen Stelle der erreichbaren Räume versteckt.
+	 * weitere Fundsachen kommen in feste Verstecke, und die Flöte wird in einer zufälligen
+	 * Stelle der erreichbaren Räume versteckt.
 	 */
 	private void placeItems() {
 		getRoom(QUEENS_GARDENS).addItem(KeyItem.createKey());
 		addHidingSpots();
+		hideFoundItems();
 		hideFlute();
+	}
+
+	/**
+	 * Versteckt die weiteren Fundsachen in festen Verstecken. Ein Versteck kann nur einen
+	 * Gegenstand halten, darum liegen sie nur in Räumen, in denen die Flöte nie versteckt wird.
+	 * Sonst könnte die Flöte eine Fundsache überschreiben oder umgekehrt.
+	 */
+	private void hideFoundItems() {
+		hideItem(KINGS_PASS, "stones", new Item("stone", "A heavy, round stone.", 5.0));
+		hideItem(RESTING_GROUNDS, "crypt", new Item("tablet", "An old stone tablet with strange signs.", 12.0));
+		hideItem(QUEENS_GARDENS, "fountain", new Item("ring", "A small golden ring.", 0.1));
+		hideItem(GREENPATH, "tree", new Item("honey", "A jar of sweet honey.", 0.8));
+		hideItem(THE_ABYSS, "bones", new Item("skull", "An old skull, white as chalk.", 1.5));
+	}
+
+	/**
+	 * Versteckt einen Gegenstand in einem bestimmten Versteck eines Raums.
+	 *
+	 * @param roomName  Name des Raums
+	 * @param spotName  Befehlswort des Verstecks
+	 * @param item      der Gegenstand, der versteckt wird
+	 */
+	private void hideItem(String roomName, String spotName, Item item) {
+		getRoom(roomName).getHidingSpot(spotName).hideItem(item);
 	}
 
 	/**

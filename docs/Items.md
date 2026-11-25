@@ -159,11 +159,19 @@ A wild Charmander (Fire) Lv 30 - HP 80/80, ATK 24, 0.85 kg appears!
 
 Weil es eine Liste ist, können auch mehrere Gegenstände im gleichen Raum liegen. Was man mit `drop` ablegt, kommt einfach hinten in die Liste und bleibt dort liegen, bis man es wieder aufnimmt. Die Gegenstände werden in der Reihenfolge angezeigt, in der sie in den Raum gekommen sind, mit Komma getrennt:
 
+Im Spiel sieht man das zum Beispiel in den Queen's Gardens. Dort liegt der Schlüssel offen am Boden, und im Springbrunnen ist der Ring versteckt. Nach `search fountain` liegen beide im Raum:
+
 ```
-Items: flute, key
+> search fountain
+You found ring!
+> look
+You are in Queen's Gardens. An overgrown garden full of thorns and flowers.
+Exits: south
+Items: key, ring
+You could search: bush, fountain, bench, flowerbed
 ```
 
-Diese Ausgabe ist aus dem Test `RoomItemTest`. Im normalen Spielablauf liegen selten zwei Gegenstände im gleichen Raum, weil es nur die Flöte und den Schlüssel gibt und die Flöte beim Benutzen verbraucht wird, bevor man zum Schlüssel kommt. Die Liste funktioniert aber für beliebig viele Gegenstände, das ist in den Tests geprüft.
+Genauso kann man mit `drop` mehrere Gegenstände im gleichen Raum ablegen. In `RoomItemTest` ist geprüft, dass die Liste für beliebig viele Gegenstände funktioniert.
 
 ## Gewicht
 
@@ -204,6 +212,31 @@ Wenn ein Gegenstand zu schwer ist, bleibt er im Raum liegen und es kommt diese M
 ```
 That is too heavy. Drop something or release a Pokémon first.
 ```
+
+Am schnellsten merkt man das bei der `tablet` aus den Resting Grounds, die 12 kg wiegt. Im folgenden Beispiel trägt der Spieler schon den `stone` (5 kg) und hat Charmander und Phanpy dabei (zusammen 4.20 kg). Mit der `tablet` wären es 21.20 kg, also zu viel. Erst nachdem der `stone` abgelegt ist, passt sie:
+
+```
+> inventory
+You are carrying:
+  stone (5.00 kg)
+Pokémon: 4.20 kg
+Total: 9.20 / 20.00 kg
+> search crypt
+You found tablet!
+> take tablet
+That is too heavy. Drop something or release a Pokémon first.
+> drop stone
+You drop the stone.
+> take tablet
+You take the tablet.
+> inventory
+You are carrying:
+  tablet (12.00 kg)
+Pokémon: 4.20 kg
+Total: 16.20 / 20.00 kg
+```
+
+Statt den `stone` abzulegen, hätte man auch Phanpy mit `release` freilassen können (3.35 kg weniger, dann wären es mit der `tablet` 17.85 kg).
 
 Das Gewicht wird auch an anderen Stellen gebraucht: Wenn man nach einem Kampf ein Pokémon fangen will, prüft Ledions Code in `PokemonActions` ebenfalls mit `player.canCarry(wild.getCarryWeight())`, ob es noch Platz hat.
 
@@ -303,7 +336,7 @@ You take the flute.
 
 ## Verstecke und search
 
-Die Flöte liegt nicht einfach offen herum, sondern ist versteckt. Dafür gibt es die Klasse `HidingSpot`. Ein Versteck hat ein Befehlswort (z. B. `ash`), eine englische Beschreibung (z. B. `a pile of ash`) und eventuell einen versteckten Gegenstand:
+Die Flöte und die anderen Fundsachen liegen nicht einfach offen herum, sondern sind versteckt. Dafür gibt es die Klasse `HidingSpot`. Ein Versteck hat ein Befehlswort (z. B. `ash`), eine englische Beschreibung (z. B. `a pile of ash`) und eventuell einen versteckten Gegenstand:
 
 ```java
 public class HidingSpot {
@@ -323,6 +356,14 @@ public Item search() {
 }
 ```
 
+Für die Tests gibt es noch `getHiddenItem()`. Die Methode gibt den versteckten Gegenstand zurück, ohne ihn herauszunehmen. So kann ein Test nachschauen, was wo versteckt ist, ohne die Welt dabei zu verändern:
+
+```java
+public Item getHiddenItem() {
+    return hiddenItem;
+}
+```
+
 Jeder Raum hat eine Liste mit seinen Verstecken (`addHidingSpot`, `getHidingSpot`, `getHidingSpots`). `longDescription()` zeigt sie in der Zeile `You could search: ...` an, damit der Spieler weiss, was er untersuchen kann.
 
 Der Befehl `search` in `ItemActions` sucht das Versteck im aktuellen Raum. Findet man etwas, liegt es danach offen im Raum und kann mit `take` aufgenommen werden:
@@ -339,7 +380,7 @@ System.out.println("You found " + found.getName() + "!");
 
 Die anderen Meldungen sind `Search what?` (ohne zweites Wort) und `There is no <name> here.` (wenn es das Versteck im Raum nicht gibt).
 
-### Die Flöte wird zufällig versteckt
+### Gegenstände in der Welt verteilen
 
 Die Gegenstände werden in `WorldBuilder` mit `placeItems()` verteilt. Die Methode wird als letzte Zeile im Konstruktor aufgerufen, wenn alle Räume schon gebaut sind:
 
@@ -347,11 +388,34 @@ Die Gegenstände werden in `WorldBuilder` mit `placeItems()` verteilt. Die Metho
 private void placeItems() {
     getRoom(QUEENS_GARDENS).addItem(KeyItem.createKey());
     addHidingSpots();
+    hideFoundItems();
     hideFlute();
 }
 ```
 
-Zuerst kommt der Schlüssel offen in die Queen's Gardens. Dann bekommt jeder Raum ausser Exit seine Verstecke, so wie in der Tabelle „Stellen pro Raum“ in `Idee.md`. Zum Schluss wird die Flöte versteckt.
+Zuerst kommt der Schlüssel offen in die Queen's Gardens. Dann bekommt jeder Raum ausser Exit seine Verstecke, so wie in der Tabelle „Stellen pro Raum“ in `Idee.md`. Danach kommen die weiteren Fundsachen in ihre Verstecke, und zum Schluss wird die Flöte versteckt.
+
+### Weitere Fundsachen
+
+Am Anfang gab es nur die Flöte und den Schlüssel, zusammen 0.7 kg. Damit hätte man das Maximalgewicht von 20 kg mit Gegenständen nie erreicht, und alle anderen Verstecke waren leer. Darum gibt es noch fünf Fundsachen. Es sind normale `Item`s ohne besondere Wirkung, sie liegen immer im gleichen Versteck:
+
+```java
+private void hideFoundItems() {
+    hideItem(KINGS_PASS, "stones", new Item("stone", "A heavy, round stone.", 5.0));
+    hideItem(RESTING_GROUNDS, "crypt", new Item("tablet", "An old stone tablet with strange signs.", 12.0));
+    hideItem(QUEENS_GARDENS, "fountain", new Item("ring", "A small golden ring.", 0.1));
+    hideItem(GREENPATH, "tree", new Item("honey", "A jar of sweet honey.", 0.8));
+    hideItem(THE_ABYSS, "bones", new Item("skull", "An old skull, white as chalk.", 1.5));
+}
+
+private void hideItem(String roomName, String spotName, Item item) {
+    getRoom(roomName).getHidingSpot(spotName).hideItem(item);
+}
+```
+
+Wichtig ist, in welchen Räumen die Fundsachen liegen. Ein `HidingSpot` hat nur ein Feld `hiddenItem`, er kann also nur einen Gegenstand halten. Würde eine Fundsache in einem der 7 Räume liegen, in denen die Flöte zufällig versteckt wird, könnte die Flöte im gleichen Versteck landen und die Fundsache überschreiben. Läge die Fundsache umgekehrt später drin, wäre die Flöte weg und das Spiel nicht mehr lösbar. Darum liegen alle fünf in King's Pass, Resting Grounds, Queen's Gardens, Greenpath und The Abyss. In diesen Räumen wird die Flöte nie versteckt, sie können sich also nicht in die Quere kommen.
+
+### Die Flöte wird zufällig versteckt
 
 Damit das Spiel nicht jedes Mal gleich ist, kommt die Flöte in ein zufälliges Versteck. Es kommen aber nur die 7 Räume in Frage, die man erreicht, bevor das Snorlax weg ist. Sonst könnte die Flöte hinter dem Snorlax liegen, und man käme nie dorthin. In diesen 7 Räumen gibt es zusammen 26 Verstecke:
 
@@ -375,8 +439,13 @@ Der Zufall kommt über das `Random`-Objekt, das dem `WorldBuilder` im Konstrukto
 |---|---|---|---|---|---|
 | Flöte | `flute` | `KeyItem` | 0.5 kg | zufälliges Versteck in Ashfall Valley, City of Tears, Forgotten Crossroads, Fog Canyon, White Palace, Ancient Treasures oder Royale Waterways | `use flute` im Greenpath weckt das Snorlax, Weg nach Osten ist frei |
 | Schlüssel | `key` | `KeyItem` | 0.2 kg | offen in den Queen's Gardens | `use key` im White Palace öffnet die Tür nach Süden (The Abyss) |
+| Stein | `stone` | `Item` | 5.0 kg | King's Pass, Versteck `stones` | keine |
+| Steintafel | `tablet` | `Item` | 12.0 kg | Resting Grounds, Versteck `crypt` | keine |
+| Ring | `ring` | `Item` | 0.1 kg | Queen's Gardens, Versteck `fountain` | keine |
+| Honig | `honey` | `Item` | 0.8 kg | Greenpath, Versteck `tree` | keine |
+| Schädel | `skull` | `Item` | 1.5 kg | The Abyss, Versteck `bones` | keine |
 
-Beide Gegenstände werden beim Benutzen verbraucht. Zum Tragegewicht zählen ausserdem die Pokémon im Pokéball mit einem Zehntel ihres Gewichts (siehe [Gewicht](#gewicht)).
+Flöte und Schlüssel werden beim Benutzen verbraucht. Die fünf Fundsachen kann man nur aufnehmen, tragen und ablegen. Zusammen wiegen alle Gegenstände 20.1 kg, man kann also nicht alles gleichzeitig tragen. Zum Tragegewicht zählen ausserdem die Pokémon im Pokéball mit einem Zehntel ihres Gewichts (siehe [Gewicht](#gewicht)).
 
 ## Tests
 
@@ -387,9 +456,9 @@ Für jede Klasse gibt es JUnit-Tests. Jeder Test hat JavaDoc und einen `@Display
 | `ItemTest` | 6 | Konstruktor, Getter, `toString` mit zwei Nachkommastellen und Rundung |
 | `KeyItemTest` | 8 | Zielraum und Richtung, Vererbung von `Item`, `createFlute()` und `createKey()` |
 | `InventoryTest` | 8 | hinzufügen, entfernen, suchen ohne Gross-/Kleinschreibung, Gesamtgewicht, Kopie von `getItems` |
-| `HidingSpotTest` | 7 | verstecken, untersuchen, nach `search` ist das Versteck leer |
+| `HidingSpotTest` | 9 | verstecken, untersuchen, nach `search` ist das Versteck leer, `getHiddenItem` nimmt nichts heraus |
 | `RoomItemTest` | 16 | Items und Verstecke im Raum, Zeilen `Items: ...` und `You could search: ...` in `longDescription()` |
 | `ItemActionsTest` | 14 | `take`, `drop`, `search`, `inventory` und `look` mit allen Meldungen, zu schweres Item, Item genau an der 20-kg-Grenze |
-| `WorldBuilderItemsTest` | 8 | Schlüssel in den Queen's Gardens, Verstecke in jedem Raum ausser Exit, Flöte genau einmal und nur in den 7 erreichbaren Räumen, gleicher Ort mit `Random(42)` |
+| `WorldBuilderItemsTest` | 12 | Schlüssel in den Queen's Gardens, Verstecke in jedem Raum ausser Exit, Flöte genau einmal und nur in den 7 erreichbaren Räumen, gleicher Ort mit `Random(42)`, Fundsachen am richtigen Ort mit richtigem Gewicht, in den Flöten-Räumen ist mit 50 verschiedenen Seeds nie etwas anderes als die Flöte versteckt |
 
 Bei `ItemActionsTest` wird die Konsolenausgabe mit `System.setOut` abgefangen. So kann man auch prüfen, ob die richtige Meldung kommt, und nicht nur, ob der Gegenstand am richtigen Ort ist.

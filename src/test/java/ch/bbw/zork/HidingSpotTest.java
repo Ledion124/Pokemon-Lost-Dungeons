@@ -82,4 +82,23 @@ class HidingSpotTest {
 
         assertNull(ash.search());
     }
+
+    /** getHiddenItem zeigt den versteckten Gegenstand, ohne ihn herauszunehmen. */
+    @Test
+    @DisplayName("getHiddenItem nimmt den Gegenstand nicht heraus")
+    void getHiddenItemDoesNotRemoveItem() {
+        KeyItem flute = KeyItem.createFlute();
+        ash.hideItem(flute);
+
+        assertSame(flute, ash.getHiddenItem());
+        assertTrue(ash.hasHiddenItem());
+        assertSame(flute, ash.search());
+    }
+
+    /** getHiddenItem gibt bei einer leeren Stelle null zurück. */
+    @Test
+    @DisplayName("getHiddenItem gibt null bei leerer Stelle")
+    void getHiddenItemOfEmptySpotIsNull() {
+        assertNull(ash.getHiddenItem());
+    }
 }
