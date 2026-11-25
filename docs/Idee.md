@@ -121,7 +121,8 @@ In jedem Raum gibt es ein paar Stellen zum Untersuchen, z. B. **Steine** oder **
 
 - Die **Zauberflöte** wird zu Spielbeginn zufällig in eine Stelle in einem der Räume gelegt, die man **ohne** Relaxo und **ohne** The Abyss erreicht:
   Ashfall Valley, City of Tears, Forgotten Crossroads, Fog Canyon, White Palace, Ancient Treasures, Royale Waterways.
-- Weitere Fundsachen: *werden noch festgelegt.* Bis dahin sind die anderen Stellen leer („Du findest nichts.“).
+- Weitere Fundsachen liegen immer am gleichen Ort: `stone` (King's Pass, `stones`), `tablet` (Resting Grounds, `crypt`), `ring` (Queen's Gardens, `fountain`), `honey` (Greenpath, `tree`) und `skull` (The Abyss, `bones`). Sie liegen absichtlich nur in Räumen, in denen die Flöte nie versteckt wird, weil jede Stelle nur einen Gegenstand halten kann. Siehe [Gegenstände (Items)](#gegenstände-items).
+- Alle anderen Stellen sind leer („You find nothing.“).
 - Jede Stelle kann nur einmal etwas hergeben. Was man findet, landet direkt im Raum und kann mit `take` aufgenommen werden.
 
 ### Stellen pro Raum
@@ -307,6 +308,18 @@ Die meisten „Gegenstände“, die man trägt, sind die **Pokémon in ihren Pok
 
 Beide werden beim Benutzen **verbraucht** (verschwinden aus dem Inventar). Der geöffnete Weg bleibt danach dauerhaft offen.
 
+Dazu gibt es fünf Fundsachen. Sie haben im Spiel keine Funktion, man kann sie aber aufnehmen, tragen und ablegen. Vor allem machen sie das Gewicht spürbar: Mit der `tablet` (12 kg) kommt man schnell an die 20-kg-Grenze.
+
+| Gegenstand | im Spiel | Gewicht | Fundort (Stelle) |
+|---|---|---|---|
+| Stein | `stone` | 5.0 kg | King's Pass (`stones`) |
+| Steintafel | `tablet` | 12.0 kg | Resting Grounds (`crypt`) |
+| Ring | `ring` | 0.1 kg | Queen's Gardens (`fountain`) |
+| Honig | `honey` | 0.8 kg | Greenpath (`tree`) |
+| Schädel | `skull` | 1.5 kg | The Abyss (`bones`) |
+
+Die Fundsachen liegen nur in Räumen, in denen die Flöte nie versteckt wird. Eine Stelle kann nur einen Gegenstand halten, sonst würde die Flöte eine Fundsache überschreiben oder umgekehrt.
+
 Ein Raum speichert seine Gegenstände in einer **Liste** (`ArrayList<Item>`): Was der Spieler mit `drop` ablegt, bleibt im Raum liegen – auch mehrere Gegenstände pro Raum.
 
 ---
@@ -378,6 +391,8 @@ classDiagram
         +getStartRoom() Room
         -addRoom(String name, String description, int pokemonLevel) Room
         -placeItems()
+        -hideFoundItems()
+        -hideItem(String roomName, String spotName, Item item)
         -hideFlute()
         -addHidingSpots()
     }
@@ -483,6 +498,7 @@ classDiagram
         +getDescription() String
         +hideItem(Item item)
         +search() Item
+        +getHiddenItem() Item
         +hasHiddenItem() boolean
     }
     class ItemActions {
