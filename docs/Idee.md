@@ -313,41 +313,41 @@ Ein Raum speichert seine Gegenstände in einer **Liste** (`ArrayList<Item>`): Wa
 
 ## 2.1 b) Klassendiagramm
 
-> Stand vom Anfang des Projekts, wird in Stufe 4 mit allen neuen Klassen aktualisiert.
+> Stand Ende Block 3: alle Klassen mit Attributen, Methoden und Beziehungen.
+> `+` = public, `-` = private, `$` = static. Vererbung: `KeyItem` erbt von `Item`, `BossPokemon` erbt von `Pokemon`.
 
 ```mermaid
 classDiagram
+    direction TB
+
+    %% ===================== Start & Steuerung =====================
     class Zork2 {
         +main(String[] args)$
     }
     class Game {
         -Parser parser
-        -Room currentRoom
-        -Room ashfallValley
-        -Room cityOfTears
-        -Room forgottenCrossroads
-        -Room fogCanyon
-        -Room whitePalace
-        -Room abyss
-        -Room ancientTreasures
-        -Room kingsPass
-        -Room queensGardens
-        -Room restingGrounds
-        -Room greenpath
-        -Room royaleWaterways
-        -Room exit
+        -Random random
+        -WorldBuilder world
+        -Player player
+        -WorldActions worldActions
+        -ItemActions itemActions
+        -PokemonActions pokemonActions
         +Game()
         +play()
+        -initGame()
+        -restartGame()
         -printWelcome()
-        -processCommand(Command command) boolean
         -printHelp()
-        -goRoom(Command command)
+        -processCommand(Command command) boolean
+        -goRoom(Command command) boolean
+        -goBack()
     }
     class Parser {
         -CommandWords validCommandWords
-        -InputStream inputStream
+        -BufferedReader bufferedReader
         +Parser(InputStream inputStream)
         +getCommand() Command
+        +readLine() String
         +showCommands() String
     }
     class CommandWords {
@@ -365,24 +365,265 @@ classDiagram
         +isUnknown() boolean
         +hasSecondWord() boolean
     }
+
+    %% ===================== Welt & Spieler (Engel) =====================
+    class WorldBuilder {
+        +String ASHFALL_VALLEY bis EXIT (13 Raumnamen)$
+        -Random random
+        -List~Room~ rooms
+        -Room startRoom
+        +WorldBuilder(Random random)
+        +getRooms() List~Room~
+        +getRoom(String name) Room
+        +getStartRoom() Room
+        -addRoom(String name, String description, int pokemonLevel) Room
+        -placeItems()
+        -hideFlute()
+        -addHidingSpots()
+    }
     class Room {
+        -String name
         -String description
-        -HashMap~String,Room~ exits
-        +Room(String description)
+        -int pokemonLevel
+        -boolean winRoom
+        -Map~String,Room~ exits
+        -Map~String,String~ lockMessages
+        -List~Item~ items
+        -List~HidingSpot~ hidingSpots
+        -Pokemon wildPokemon
+        +Room(String name, String description, int pokemonLevel)
+        +getName() String
+        +getDescription() String
+        +getPokemonLevel() int
+        +isWinRoom() boolean
+        +setWinRoom(boolean winRoom)
         +setExits(Room north, Room east, Room south, Room west)
-        +shortDescription() String
-        +longDescription() String
-        -exitString() String
         +nextRoom(String direction) Room
+        +lockExit(String direction, String message)
+        +unlockExit(String direction)
+        +isLocked(String direction) boolean
+        +getLockMessage(String direction) String
+        +hasExitTo(Room room) boolean
+        +addItem(Item item)
+        +removeItem(String name) Item
+        +getItem(String name) Item
+        +getItems() List~Item~
+        +addHidingSpot(HidingSpot hidingSpot)
+        +getHidingSpot(String name) HidingSpot
+        +getHidingSpots() List~HidingSpot~
+        +getWildPokemon() Pokemon
+        +setWildPokemon(Pokemon pokemon)
+        +removeWildPokemon()
+        +hasWildPokemon() boolean
+        +isSpawnRoom() boolean
+        +longDescription() String
+        +exitString() String
+    }
+    class Player {
+        +double MAX_WEIGHT$
+        -Room currentRoom
+        -Stack~Room~ history
+        -Inventory inventory
+        -PokemonCollection pokemons
+        +Player(Room startRoom)
+        +getCurrentRoom() Room
+        +moveTo(Room room)
+        +canGoBack() boolean
+        +goBack() Room
+        +getInventory() Inventory
+        +getPokemons() PokemonCollection
+        +getTotalWeight() double
+        +canCarry(double extraWeight) boolean
+    }
+    class WorldActions {
+        -Parser parser
+        -WorldBuilder world
+        -Player player
+        +WorldActions(Parser parser, WorldBuilder world, Player player)
+        +useItem(Command command)
+        +showMap()
+        +chooseStarter()
     }
 
+    %% ===================== Gegenstände (Castelberg) =====================
+    class Item {
+        -String name
+        -String description
+        -double weight
+        +Item(String name, String description, double weight)
+        +getName() String
+        +getDescription() String
+        +getWeight() double
+        +toString() String
+    }
+    class KeyItem {
+        -String targetRoom
+        -String direction
+        +KeyItem(String name, String description, double weight, String targetRoom, String direction)
+        +getTargetRoom() String
+        +getDirection() String
+        +createFlute()$ KeyItem
+        +createKey()$ KeyItem
+    }
+    class Inventory {
+        -ArrayList~Item~ items
+        +add(Item item)
+        +remove(String name) Item
+        +get(String name) Item
+        +getItems() List~Item~
+        +getTotalWeight() double
+        +isEmpty() boolean
+    }
+    class HidingSpot {
+        -String name
+        -String description
+        -Item hiddenItem
+        +HidingSpot(String name, String description)
+        +getName() String
+        +getDescription() String
+        +hideItem(Item item)
+        +search() Item
+        +hasHiddenItem() boolean
+    }
+    class ItemActions {
+        -Player player
+        +ItemActions(Player player)
+        +look()
+        +search(Command command)
+        +takeItem(Command command)
+        +dropItem(Command command)
+        +showInventory()
+    }
+
+    %% ===================== Pokémon & Kampf (Sakaj) =====================
+    class PokemonType {
+        <<enumeration>>
+        FIRE
+        GRASS
+        ICE
+        GROUND
+        ROCK
+        NORMAL
+        -String displayName
+        +getDisplayName() String
+        +getMultiplier(PokemonType defender) double
+    }
+    class Pokemon {
+        -String name
+        -PokemonType type
+        -int baseHp
+        -int baseAttack
+        -double weight
+        -int level
+        -int currentHp
+        +Pokemon(String name, PokemonType type, int baseHp, int baseAttack, double weight, int level)
+        +getName() String
+        +getType() PokemonType
+        +getLevel() int
+        +getWeight() double
+        +getCarryWeight() double
+        +getMaxHp() int
+        +getAttack() int
+        +getCurrentHp() int
+        +getDamageAgainst(Pokemon defender) int
+        +takeDamage(int damage)
+        +isFainted() boolean
+        +heal()
+        +levelUp()
+        +canBeScared() boolean
+        +toString() String
+    }
+    class BossPokemon {
+        +BossPokemon(String name, PokemonType type, int baseHp, int baseAttack, double weight, int level)
+        +canBeScared() boolean
+        +getDefeatMessage() String
+    }
+    class Pokedex {
+        +create(String name, int level)$ Pokemon
+        +createRandom(int level, Random random)$ Pokemon
+        +createBoss()$ BossPokemon
+        +getAllNames()$ List~String~
+    }
+    class PokemonCollection {
+        -List~Pokemon~ pokemons
+        +add(Pokemon pokemon)
+        +get(int number) Pokemon
+        +remove(int number) Pokemon
+        +size() int
+        +getAll() List~Pokemon~
+        +healAll()
+        +getTotalWeight() double
+    }
+    class Battle {
+        -List~Pokemon~ team
+        -Pokemon enemy
+        -List~String~ log
+        -List~Pokemon~ fighters
+        +Battle(List~Pokemon~ team, Pokemon enemy)
+        +fight() boolean
+        +getLog() List~String~
+        -attack(Pokemon attacker, Pokemon defender)
+    }
+    class PokemonActions {
+        -Parser parser
+        -WorldBuilder world
+        -Player player
+        -Random random
+        +PokemonActions(Parser parser, WorldBuilder world, Player player, Random random)
+        +spawnAll()
+        +onEnterRoom(Room room)
+        +fight() boolean
+        +scare()
+        +showTeam()
+        +release(Command command)
+        -catchPokemon(Pokemon wild)
+        -parseTeam(String input) List~Pokemon~
+        -parseNumber(String text) int
+    }
+
+    %% ===================== Vererbung =====================
+    Item <|-- KeyItem
+    Pokemon <|-- BossPokemon
+
+    %% ===================== Beziehungen =====================
     Zork2 ..> Game : erzeugt
-    Game "1" --> "1" Parser : parser
-    Game "1" *-- "13" Room : Räume
-    Game --> "1" Room : currentRoom
-    Game ..> Command : verwendet
-    Parser "1" --> "1" CommandWords : validCommandWords
+    Game --> Parser
+    Game --> WorldBuilder
+    Game --> Player
+    Game --> WorldActions
+    Game --> ItemActions
+    Game --> PokemonActions
+    Game ..> Command : verarbeitet
+    Parser --> CommandWords
     Parser ..> Command : erzeugt
+
+    WorldBuilder "1" *-- "13" Room : rooms
     Room --> "0..4" Room : exits
+    Room o-- "*" Item : items
+    Room *-- "*" HidingSpot : hidingSpots
+    Room o-- "0..1" Pokemon : wildPokemon
+    HidingSpot o-- "0..1" Item : hiddenItem
+
+    Player --> Room : currentRoom / history
+    Player *-- "1" Inventory
+    Player *-- "1" PokemonCollection
+    Inventory o-- "*" Item
+    PokemonCollection o-- "*" Pokemon
+
+    WorldActions --> WorldBuilder
+    WorldActions --> Player
+    WorldActions ..> KeyItem : use
+    WorldActions ..> Pokedex : Starter
+    ItemActions --> Player
+    PokemonActions --> WorldBuilder
+    PokemonActions --> Player
+    PokemonActions ..> Battle : erzeugt
+    PokemonActions ..> Pokedex : spawnt
+
+    Pokemon --> PokemonType : type
+    Pokedex ..> Pokemon : erzeugt
+    Battle --> "1..3" Pokemon : team
+    Battle --> "1" Pokemon : enemy
 ```
+
 ![Klassendiagramm](Zork_diagramm.png)
