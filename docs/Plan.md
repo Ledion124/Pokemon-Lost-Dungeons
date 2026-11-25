@@ -31,8 +31,8 @@ Damit das ohne Warten und ohne Merge-Konflikte klappt:
 ## Gemeinsame Festlegungen (gelten für alle Blöcke)
 
 ### Technik
-- Java **17**, Maven, JUnit **5** (schon im `pom.xml`). Alles im Ordner `02_Zork-Start`.
-- Code: `02_Zork-Start/src/main/java/ch/bbw/zork/`, Tests: `02_Zork-Start/src/test/java/ch/bbw/zork/` (Paket `ch.bbw.zork`).
+- Java **17**, Maven, JUnit **5** (schon im `pom.xml`). Alles direkt im Hauptordner des Repos.
+- Code: `src/main/java/ch/bbw/zork/`, Tests: `src/test/java/ch/bbw/zork/` (Paket `ch.bbw.zork`).
 - Testklasse heisst wie die Klasse + `Test`, z. B. `RoomTest`. Assertions mit `org.junit.jupiter.api.Assertions.*`.
 - Jede Testmethode hat **JavaDoc und `@DisplayName`** (beides Deutsch, kurz), z. B.:
   ```java
@@ -114,7 +114,7 @@ git pull origin dev
 - Regelmässig `git push origin dev-<name>` (Backup).
 
 ### Ende des Blocks
-1. `mvn clean test` im Ordner `02_Zork-Start` → grün
+1. `mvn clean test` im Hauptordner → grün
 2. Nochmals `git pull origin dev` (falls schon jemand gemergt hat), Konflikte lösen, nochmals `mvn clean test`
 3. `git push origin dev-<name>`, PR **`dev-<name>` → `dev`**, im Chat melden
 4. Ein anderes Teammitglied schaut kurz drüber und merged
@@ -432,8 +432,8 @@ Blöcke 1–4 zusammen ca. 21 h (Stunden stehen bei jedem Block), dazu Mergen/Bu
 4. Live-Demo (~1 Min.)
 
 ## Verifikation
-- Nach jedem Merge: `mvn clean test` im Ordner `02_Zork-Start` grün
-- Ende Block 3, einmal komplett durchspielen, aus der IDE (`Zork2.main`) oder im Ordner `02_Zork-Start` mit `mvn compile` und danach `java -cp target/classes ch.bbw.zork.Zork2`:
+- Nach jedem Merge: `mvn clean test` im Hauptordner grün
+- Ende Block 3, einmal komplett durchspielen, aus der IDE (`Zork2.main`) oder im Hauptordner mit `mvn compile` und danach `java -cp target/classes ch.bbw.zork.Zork2`:
   1. Starter wählen, `look`, `team`
   2. Flöte suchen (`search …`), `take flute`, `inventory`
   3. Greenpath: `go east` blockiert → `use flute` → `go east` geht
